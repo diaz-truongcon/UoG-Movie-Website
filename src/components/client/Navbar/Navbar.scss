@@ -1,0 +1,39 @@
+.header {
+    display: flex;
+    padding: 0.5rem 4%;
+    background-image: linear-gradient(180deg,rgba(0,0,0,.9),rgba(0,0,0,0));
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    z-index: 1;
+    width: 100%;
+}
+.app-menu {
+    width: 80%;
+}
+
+.ant-menu-title-content:hover {
+ color: white !important;
+}
+:where(.css-dev-only-do-not-override-gzal6t).ant-menu-horizontal {
+    border: none;
+}
+.ant-drawer-content-wrapper {
+   width: 60% !important;
+}
+@media screen and (min-width: 741px) {
+    .menu-header {
+        display: none;
+    }
+}
+
+
+@media screen and (max-width: 740px) {
+    .app-menu {
+        display: none;
+    }
+    .menu-header {
+        width: 67.29px;
+    }
+}
