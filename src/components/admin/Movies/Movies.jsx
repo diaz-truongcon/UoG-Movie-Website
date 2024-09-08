@@ -145,14 +145,6 @@ function Movies() {
                         </span>
                     )} />
                 <Column
-                    title="Link Film"
-                    dataIndex="linkfilm"
-                    key="linkfilm"
-                    render={(text) => (
-                        <span>
-                            {text.length > 50 ? `${text.substring(0, 18)}...` : text}
-                        </span>)} />
-                <Column
                     title="Action"
                     key="action"
                     render={(text, record) => (
@@ -205,9 +197,6 @@ function Movies() {
                         <Input.TextArea />
                     </Form.Item>
                     <Form.Item label="Protagonist" name="protagonist">
-                        <Input />
-                    </Form.Item>
-                    <Form.Item label="Link Film" name="linkfilm">
                         <Input />
                     </Form.Item>
                     <Form.Item

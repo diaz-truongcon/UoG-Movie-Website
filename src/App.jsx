@@ -9,14 +9,16 @@ import { ligthTheme, darkTheme } from './components/theme/Theme';
 
 function App() {
   const [currentTheme, setCurrentTheme] = useState("dark");
+  const [admin, setAdmin] = useState(false);
   return (
     <div>
           <ConfigProvider theme={{
             token: currentTheme === "dark" ? darkTheme : ligthTheme ,
           }}>
-            <HomeAdmin currentTheme={currentTheme} setCurrentTheme={setCurrentTheme}></HomeAdmin> 
+            {admin ? 
+            <HomeAdmin currentTheme={currentTheme} setCurrentTheme={setCurrentTheme}></HomeAdmin> : <Home setAdmin={setAdmin}></Home> 
+          }
           </ConfigProvider>
-          {/* <Home></Home> */}
     </div>
   );
 }

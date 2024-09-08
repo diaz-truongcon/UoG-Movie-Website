@@ -15,7 +15,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 
-const Navbar = () => {
+const Navbar = ({setAdmin}) => {
   const [openMenu, setOpenMenu] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [customers, setCustomers] = useState([]);
@@ -86,13 +86,14 @@ const Navbar = () => {
           message.error('Failed to add customers. Please try again.');
         }
       } else {
-        const customerLogin = JSON.stringify(exits);
-        localStorage.setItem('customerLogin', customerLogin);
         localStorage.setItem('isLoggedIn', 'true');
         handleCancel();
         message.success('Successful login');
         setLogin(true);
         setCustomer(exits);
+        if(exits.role == 1) {
+            setAdmin(true);
+        }
       }
   
     } catch (error) {
@@ -107,6 +108,7 @@ const Navbar = () => {
   const handleLogout = () => {
     // Clear login status from localStorage
     localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('customerLogin');
     setLogin(false);
   };
  // Phone Login

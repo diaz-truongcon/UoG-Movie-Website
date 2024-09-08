@@ -4,11 +4,10 @@ import { HeartOutlined, PlusOutlined } from '@ant-design/icons';
 import { useParams } from 'react-router-dom';
 import { ContextMovies } from '../../../context/MoviesContext';
 import ItemCarousel from '../ItemCarousel/ItemCarousel';
-
+import { Link } from 'react-router-dom';
 const { Title, Text, Paragraph } = Typography;
 
 const MovieDetail = () => {
-  const [playMovie, setPlayMovie] = useState(false);
   const [movie, setMovie] = useState(null);
   const { id } = useParams();
   const movies = useContext(ContextMovies);
@@ -17,11 +16,6 @@ const MovieDetail = () => {
     const foundMovie = movies.find((element) => element.id === id);
     setMovie(foundMovie);
   }, [id, movies]);
-
-  const handleWatchMovie = () => {
-    setPlayMovie(true);
-    message.success('Enjoy watching the movie!');
-  };
 
   const handleLike = () => {
     message.success('Movie liked!');
@@ -39,42 +33,17 @@ const MovieDetail = () => {
     <>
 
       <div className='slide'>
-        {playMovie ? (
-          <iframe
-            width="100%"
-            src={movie.linkfilm}
-            title=""
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen={true}
-            className="playmovie"
-          ></iframe>
-        ) : (
           <Image src={movie.imgUrl} preview={false} />
-        )}
         <div className="content">
           <h3 data-shadow-text={movie.nameMovie} >{movie.nameMovie}</h3>
           <h4><strong>Duration: </strong>{movie.duration}</h4>
            <h4>{movie.categoryName}</h4>
           <h4>{movie.describe}</h4>
-        </div>
-        {/* <Row gutter={24} className={`slide ${playMovie ? "hidden" : ""}`} >
-          <Col span={24} className='content'>
-            <Title level={1} className="movie-title">{movie.nameMovie}</Title>
-            <Text strong>Duration: </Text>
-            <Text>{movie.duration}</Text>
-            <br />
-            <Text strong>Description: </Text>
-            <Paragraph>{movie.describe}</Paragraph>
-            <Text strong>Protagonist: </Text>
-            <Text>{movie.protagonist}</Text>
-            <br />
-            <Text strong>Category: </Text>
-            <Text>{movie.categoryName}</Text>
-            <br />
-            <Space>
+           <Space style={{ marginTop: '20px' }}>
               <Tooltip title="Watch Movie">
-                <Button type="primary" onClick={handleWatchMovie}>Watch Movie</Button>
+              <Link to={`/playmovie/${movie.id}`}>
+                <Button type="primary">Watch Movie</Button>
+              </Link>       
               </Tooltip>
               <Tooltip title="Like">
                 <Button icon={<HeartOutlined />} onClick={handleLike} />
@@ -83,8 +52,7 @@ const MovieDetail = () => {
                 <Button icon={<PlusOutlined />} onClick={handleAddToList} />
               </Tooltip>
             </Space>
-          </Col>
-        </Row> */}
+        </div>
       </div>
       <ItemCarousel data={movies} title="Phim Mới Thịnh Hành Trên Galaxy" />
       <ItemCarousel data={movies} title="Danh Sách Phim" />

@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import {getAuth,GoogleAuthProvider} from 'firebase/auth';
+import { getAuth,GoogleAuthProvider } from 'firebase/auth';
 
 const firebaseConfig = {
     apiKey: "AIzaSyC4JmCWLy8wGbCD7_jG_3_aMCeSPZeI83o",
@@ -11,7 +11,7 @@ const firebaseConfig = {
     messagingSenderId: "975540903901",
     appId: "1:975540903901:web:a2e6b2ec8742a59e5c2034",
     measurementId: "G-304DW54N2L"
-};
+  };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);

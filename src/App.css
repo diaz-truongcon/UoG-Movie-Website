@@ -79,7 +79,7 @@ img {
 .slide {
   position: relative;
    img {
-     opacity: 0.7;
+     opacity: 0.3;
    }
    .content {
      position: absolute;

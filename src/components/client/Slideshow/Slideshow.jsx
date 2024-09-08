@@ -6,7 +6,7 @@ function Slideshow(props) {
     const movies = useContext(ContextMovies);
     return (
         <div className='carousel'>
-            <Carousel >
+            <Carousel autoplay >
                 {
                      movies.map(element => (
                         <div className='slide' >

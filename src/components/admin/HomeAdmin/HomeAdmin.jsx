@@ -11,6 +11,7 @@ import {
 import Categories from '../Categories/Categories';
 import Movies from '../Movies/Movies';
 import Customers from '../Customers/Customers';
+import Episodes from '../Episodes/Episodes';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -41,8 +42,9 @@ const HomeAdmin = ({currentTheme,setCurrentTheme}) => {
     { key: '1', icon: <PieChartOutlined />, label: 'Dashboard', route: '/' },
     { key: '2', icon: <AppstoreOutlined />, label: 'Categories', route: '/categories' },
     { key: '3', icon: <PlayCircleOutlined />, label: 'Movies', route: '/movies' },
-    { key: '4', icon: <CustomerServiceOutlined />, label: 'Customers', route: '/customers' },
-    { key: '5', icon: <UserOutlined />, label: 'Profile', route: '/profile' },
+    { key: '4', icon: <PlayCircleOutlined />, label: 'Episodes', route: '/episodes' },
+    { key: '5', icon: <CustomerServiceOutlined />, label: 'Customers', route: '/customers' },
+    { key: '6', icon: <UserOutlined />, label: 'Profile', route: '/profile' },
     // Add other menu items as needed
   ];
 
@@ -82,6 +84,7 @@ const HomeAdmin = ({currentTheme,setCurrentTheme}) => {
                 <Route path="/" element={<div>Dashboard</div>} />
                 <Route path="/categories" element={<Categories />} />
                 <Route path="/movies" element={<Movies />} />
+                <Route path="/episodes" element={<Episodes/>} />
                 <Route path="/customers" element={<Customers />} />
               </Routes>
             </div>
