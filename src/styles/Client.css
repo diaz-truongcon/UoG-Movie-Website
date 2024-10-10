@@ -1,0 +1,53 @@
+* {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+}
+.giaitri {
+   background-color: #000;
+   color: '#fff';
+}
+.like-on {
+   background-color: aliceblue;
+}
+
+/* laptop */
+@media screen and (min-width: 1025px) {
+    .giaitri {
+        padding: 80px;
+     }
+}
+
+/* tablet */
+@media screen and (min-width:741px) and (max-width: 1024px){
+    .giaitri {
+        padding: 60px;
+     }
+}
+
+/* mobile */
+@media screen and (max-width: 740px) {
+    .giaitri {
+        padding: 30px;
+     }
+}
+.item-movies {
+   &:hover {
+      transform: scale(1.2);
+      z-index: 1;
+   }
+   &:hover .item{
+      transition: transform 0.5s ease;
+      transform: translateY(0%);
+   }
+   .item {
+      position: absolute;
+      background-color: rgba(0, 0, 0, 0.5);
+      width: calc(100% - 16px);
+      padding: 10px;
+      bottom: 0;
+      left: 8px;
+      transform: translateY(100%);
+     
+   }
+}

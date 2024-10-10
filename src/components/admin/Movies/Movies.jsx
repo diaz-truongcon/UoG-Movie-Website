@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Table, Button, Modal, Form, Input, Upload, Col, Space, Image, Row, message, Select } from 'antd';
 import { PlusOutlined, SearchOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { vip } from './Vip';
 import { fetchDocuments, addDocument, updateDocument, deleteDocument } from "../../../Service/FirebaseService";
 import { ContextCategories } from '../../../context/CategoriesContext';
+import { ContextPlans } from '../../../context/PlansContext'; // Assuming you have a Plans context
 
 const { Column } = Table;
 const { Option } = Select;
@@ -16,7 +16,9 @@ function Movies() {
     const [movieEdit, setMovieEdit] = useState(null);
     const [previewImg, setPreviewImg] = useState(null);
     const [imgUpload, setImgUpload] = useState(null);
+    const [showPriceInput, setShowPriceInput] = useState(false); // State for showing price input
     const categories = useContext(ContextCategories);
+    const plans = useContext(ContextPlans); // Assuming you have a Plans context for VIP plans
 
     useEffect(() => {
         const fetchData = async () => {
@@ -35,6 +37,7 @@ function Movies() {
         form.resetFields();
         setPreviewImg(null);
         setMovieEdit(null);
+        setShowPriceInput(false); // Reset the price input field visibility
     };
 
     const handleOk = async () => {
@@ -91,6 +94,15 @@ function Movies() {
         });
     };
 
+    const handleVipChange = (value) => {
+        const selectedPlan = plans.find(plan => plan.id === value);
+        if (selectedPlan && selectedPlan.level > 2) {
+            setShowPriceInput(true);
+        } else {
+            setShowPriceInput(false);
+        }
+    };
+
     return (
         <div>
             <Row gutter={16} align="middle">
@@ -116,16 +128,28 @@ function Movies() {
                     title="Img Movie"
                     key="imgMovie"
                     render={(text, record) => (
-                        <Image width={50} src={record.imgUrl} />)}/>
+                        <Image width={50} src={record.imgUrl} />)} />
                 <Column title="Name Movie" dataIndex="nameMovie" key="nameMovie" render={(text) => (
                     <span>
                         {text.length > 30 ? `${text.substring(0, 25)}...` : text}
                     </span>)} />
-                <Column title="Category" dataIndex="categoryId" key="categoryId" render={(text, record) => {
-                    const category = categories.find(category => category.id === record.categoryId);
-                    return category ? category.nameCategory : '';}} />
+                {/* <Column title="Category" dataIndex="categoryId" key="categoryId" render={(text, record) => {
+                    const categoryNames = record.categoryId.map(id => {
+                        const category = categories.find(category => category.id === id);
+                        return category ? category.nameCategory : '';
+                    });
+                    return categoryNames.join(', ');
+                }} /> */}
                 <Column title="Duration" dataIndex="duration" key="duration" />
-                <Column title="VIP" dataIndex="vip" key="vip" />
+                <Column
+                    title="VIP"
+                    dataIndex="vip"
+                    key="vip"
+                    render={(text, record) => {
+                        const plan = plans.find(plan => plan.id === record.vip);
+                        return plan ? plan.title : 'N/A';
+                    }}
+                />
                 <Column
                     title="Describe"
                     dataIndex="describe"
@@ -134,7 +158,7 @@ function Movies() {
                         <span>
                             {text.length > 50 ? `${text.substring(0, 18)}...` : text}
                         </span>
-                    )}/>
+                    )} />
                 <Column
                     title="Protagonist"
                     dataIndex="protagonist"
@@ -170,7 +194,7 @@ function Movies() {
                         label="Category"
                         name="categoryId"
                         rules={[{ required: true, message: 'Please select the category of the movie!' }]}>
-                        <Select>
+                        <Select mode="multiple"> {/* Allow multiple selection */}
                             {categories.map(category => (
                                 <Option key={category.id} value={category.id}>
                                     {category.nameCategory}
@@ -184,15 +208,23 @@ function Movies() {
                     <Form.Item
                         label="Vip"
                         name="vip"
-                        rules={[{ required: true, message: 'Please select the vip of the movie!' }]}>
-                        <Select>
-                            {vip.map(item => (
-                                <Option key={item.id} value={item.id}>
-                                    {item.name}
+                        rules={[{ required: true, message: 'Please select the VIP level of the movie!' }]}>
+                        <Select onChange={handleVipChange}>
+                            {plans.map(plan => (
+                                <Option key={plan.id} value={plan.id}>
+                                    {plan.title}
                                 </Option>
                             ))}
                         </Select>
                     </Form.Item>
+                    {showPriceInput && (
+                        <Form.Item
+                            label="Rental Price"
+                            name="rentalPrice"
+                            rules={[{ required: true, message: 'Please enter the rental price!' }]}>
+                            <Input />
+                        </Form.Item>
+                    )}
                     <Form.Item label="Describe" name="describe">
                         <Input.TextArea />
                     </Form.Item>
@@ -208,7 +240,7 @@ function Movies() {
                         </Upload>
                     </Form.Item>
                     <Form.Item label="Selected Image">
-                        <Image src={previewImg ? previewImg : 'https://firebasestorage.googleapis.com/v0/b/vam3d-15169.appspot.com/o/logo%2Flogoglx.svg?alt=media&token=496963e3-c862-4a5b-bd84-506ab09352ac'} />
+                        <Image src={previewImg} />
                     </Form.Item>
                 </Form>
             </Modal>

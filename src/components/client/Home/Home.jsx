@@ -3,23 +3,34 @@ import Navbar from '../Navbar/Navbar';
 import Main from '../Main/Main';
 import Footer from '../Footer/Footer';
 import MovieDetail from '../Detail/MovieDetail';
-import { BrowserRouter, Route, Routes, Link } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import PlayMovie from '../Detail/PlayMovie';
-
-function Home({setAdmin}) {
+import SubscriptionPlan from '../Vip/SubscriptionPlan';
+import PaymentPage from '../Vip/PaymentPage';
+import Welcome from '../Main/Welcome';
+import Favorites from '../Favorite/Favorites';
+import Search from '../Search/Search';
+import AccountPage from '../AccountPage/AccountPage';
+import FAQ from '../Support/FAQ';
+function Home() {
 
   return (
-    <BrowserRouter>
       <div style={{ backgroundColor: "#111111" }}>
-        <Navbar setAdmin={setAdmin}></Navbar>
+        <Navbar></Navbar>
         <Routes>
-          <Route path="/" element={<Main></Main>} />
+          <Route path="/" element={<Welcome/>} />
+          <Route path="/main" element={<Main/>} />
+          <Route path="/favorites" element={<Favorites/>} />
           <Route path="/moviedetail/:id" element={<MovieDetail />} />
           <Route path="/playmovie/:id" element={<PlayMovie/>} />
+          <Route path="/subscriptionplan" element={<SubscriptionPlan/>} />
+          <Route path="/paymentpage/:id" element={<PaymentPage/>} />
+          <Route path="/search" element={<Search/>} />
+          <Route path="/accountpage" element={<AccountPage/>} />
+          <Route path="/faq" element={<FAQ/>} />
         </Routes>
         <Footer></Footer>
       </div>
-    </BrowserRouter>
 
   );
 }

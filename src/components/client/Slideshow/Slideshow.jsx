@@ -8,8 +8,8 @@ function Slideshow(props) {
         <div className='carousel'>
             <Carousel autoplay >
                 {
-                     movies.map(element => (
-                        <div className='slide' >
+                     movies.map((element,index) => (
+                        <div className='slide' key={index} >
                         <Image
                             src={element.imgUrl}
                             alt="Description of the image"

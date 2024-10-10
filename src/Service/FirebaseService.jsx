@@ -1,5 +1,5 @@
 // src/services/firebaseService.js
-import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc, onSnapshot } from "firebase/firestore";
+import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc, onSnapshot, query, where ,getDoc} from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { db, storage } from "../config/firebase";
 import { v4 as uuidv4 } from "uuid";
@@ -71,3 +71,93 @@ export const subscribeToCollection = (collectionName, callback) => {
   
     return unsubscribe; // Trả về hàm unsubscribe để dọn dẹp
   };
+  
+  // Hàm tìm kiếm về danh sách yêu thích theo userId
+  export const getFavorites = async (userId) => {
+    const q = query(collection(db, 'Favorites'), where('userId', '==', userId));
+    const querySnapshot = await getDocs(q);
+
+    const favoriteMovies = [];
+    querySnapshot.forEach((doc) => {
+        favoriteMovies.push({
+            id: doc.id, // Lấy id của document
+            ...doc.data() // Lấy các dữ liệu của document
+        });
+    });
+    return favoriteMovies;
+};
+
+export const getPackagesByPlan = async (idPlan) => {
+    // Tạo query tìm kiếm các package với idPlan cụ thể
+    const q = query(collection(db, 'Packages'), where('idPlan', '==', idPlan));
+    const querySnapshot = await getDocs(q);
+
+    const packages = [];
+    querySnapshot.forEach((doc) => {
+        packages.push({ id: doc.id, ...doc.data() }); // Gộp doc ID vào data để dễ sử dụng
+    });
+
+    return packages;
+};
+
+
+export const checkVipEligibility = async (userId, movieId) => {
+    try {
+        // Tạo truy vấn lấy thông tin đăng ký gói VIP của người dùng
+        const subscriptionQuery = query(
+            collection(db, 'Subscriptions'), 
+            where('idUser', '==', userId)
+        );
+        const userSubscriptionSnapshot = await getDocs(subscriptionQuery);
+         
+        if (userSubscriptionSnapshot.empty) {
+            return false; // Người dùng chưa có gói VIP
+        }
+
+        const subscriptionData = userSubscriptionSnapshot.docs[0].data();
+        console.log(subscriptionData);
+        
+        // const { planId, startDate, endDate } = subscriptionData;
+
+        // const now = new Date();
+        // if (now < new Date(startDate) || now > new Date(endDate)) {
+        //     return false; 
+        // }
+
+        // Lấy thông tin gói VIP từ bảng Plans
+        const userPlanDoc = doc(db, 'Plans', planId);
+        const userPlanSnapshot = await getDoc(userPlanDoc);
+        if (!userPlanSnapshot.exists()) {
+            return false; // Gói VIP không tồn tại
+        }
+
+        const userPlanLevel = userPlanSnapshot.data().level;
+
+        // Lấy thông tin bộ phim từ bảng Movies
+        const movieDoc = doc(db, 'Movies', movieId);
+        const movieSnapshot = await getDoc(movieDoc);
+        if (!movieSnapshot.exists()) {
+            return false; // Phim không tồn tại
+        }
+
+        const requiredVipId = movieSnapshot.data().vip; // ID của gói VIP yêu cầu để xem phim
+
+        // Lấy cấp độ VIP yêu cầu của phim từ bảng Plans
+        const requiredVipPlanDoc = doc(db, 'Plans', requiredVipId);
+        const requiredVipPlanSnapshot = await getDoc(requiredVipPlanDoc);
+        if (!requiredVipPlanSnapshot.exists()) {
+            return false; // Gói VIP yêu cầu của phim không tồn tại
+        }
+
+        const requiredVipLevel = requiredVipPlanSnapshot.data().level;
+
+        // Kiểm tra nếu cấp độ VIP của người dùng đủ để xem phim
+        return userPlanLevel >= requiredVipLevel;
+
+    } catch (error) {
+        console.error('Error checking VIP eligibility:', error);
+        return false; // Trả về false nếu có lỗi
+    }
+};
+
+  

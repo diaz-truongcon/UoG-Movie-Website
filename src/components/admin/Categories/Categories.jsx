@@ -38,6 +38,7 @@ function Categories() {
                 await updateDocument('Categories', categoryEdit.id, values, imgUpload, categoryEdit.imgUrl);
                 message.success('Category updated successfully!');
             } else {
+                console.log(imgUpload);         
                 await addDocument('Categories', values, imgUpload);
                 message.success('Category added successfully!');
             }

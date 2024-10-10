@@ -1,32 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, Form, Input, Upload, Col, Space, Image, Row, message } from 'antd';
-import { PlusOutlined, SearchOutlined, EditOutlined,DeleteOutlined } from '@ant-design/icons';
-import {
-    collection,
-    addDoc,
-    getDocs,
-    doc,
-    deleteDoc,
-    updateDoc,
-} from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
-import { db } from "../../../config/firebase";
-import { v4 as uuidv4 } from "uuid";
+import React, { useState, useEffect, useContext } from 'react';
+import { Table, Button, Modal, Form, Input, Upload, Space, Image, Row, Col, Select, message } from 'antd';
+import { PlusOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { fetchDocuments, addDocument, updateDocument, deleteDocument } from "../../../Service/FirebaseService";
+import { ROLES } from "../../../utils/Contants";
+import { CustomerLoginContext } from '../../../context/CustomerLoginContext';
 const { Column } = Table;
+const { Option } = Select;
 
-function Customers(props) {
+function Customers() {
+    const [form] = Form.useForm();
+    const [customers, setCustomers] = useState([]);
     const [visible, setVisible] = useState(false);
-    const [customers,setCustomers] = useState([]);
-    const customersCollectionRef = collection(db, "Customers");
+    const [customerEdit, setCustomerEdit] = useState(null);
+    const [previewImg, setPreviewImg] = useState(null);
+    const [imgUpload, setImgUpload] = useState(null);
     const [update, setUpdate] = useState(false);
-  
+    const { isLoggedIn } = useContext(CustomerLoginContext);
     useEffect(() => {
         const fetchData = async () => {
-            const querySnapshot = await getDocs(customersCollectionRef);
-            const customersData = [];
-            querySnapshot.forEach((doc) => {
-                customersData.push({ id: doc.id, ...doc.data() });
-            });
+            const customersData = await fetchDocuments('Customers');
             setCustomers(customersData);
         };
         fetchData();
@@ -36,51 +28,179 @@ function Customers(props) {
         setVisible(true);
     };
 
+    const handleCancel = () => {
+        setVisible(false);
+        form.resetFields();
+        setPreviewImg(null);
+        setCustomerEdit(null);
+    };
+
+    const handleOk = async () => {
+        try {
+            const values = await form.validateFields();
+            if (customerEdit) {
+                await updateDocument('Customers', customerEdit.id, values, imgUpload, customerEdit.avatar);
+                message.success('Customer updated successfully!');
+            } else {
+                await addDocument('Customers', values, imgUpload);
+                message.success('Customer added successfully!');
+            }
+            setUpdate(!update);
+            handleCancel();
+        } catch (error) {
+            message.error('Failed to save customer. Please try again.');
+        }
+    };
+
+    const uploadProps = {
+        beforeUpload: (file) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                setPreviewImg(reader.result);
+            };
+            setImgUpload(file);
+            return false;
+        },
+    };
+
+    const handleEdit = (record) => {
+        form.setFieldsValue({
+            nameCustomer: record.nameCustomer,
+            email: record.email,
+            role: record.role,
+        });
+        setPreviewImg(record.imgUrl);
+        setCustomerEdit(record);
+        setVisible(true);
+    };
+
+    const handleDelete = (record) => {
+        if (isLoggedIn.role !== 'moderator') {
+            Modal.confirm({
+                title: 'Confirm Delete',
+                content: 'Are you sure you want to delete this customer?',
+                okText: 'Yes',
+                okType: 'danger',
+                cancelText: 'No',
+                async onOk() {
+                    try {
+                        await deleteDocument('Customers', record.id, record.avatar);
+                        setUpdate(!update);
+                        message.success('Customer deleted successfully!');
+                    } catch (error) {
+                        message.error('Failed to delete customer. Please try again.');
+                    }
+                },
+            });
+        } else {
+            message.error("You don't have permission to delete.");
+        }
+    };
+
     return (
-        <div>
-            <Row gutter={16} align="middle">
+        <>
+        {isLoggedIn.role === 'admin' ? (
+            <>
+             <Row gutter={16} align="middle">
                 <Col xs={24} md={6} xl={6} style={{ marginTop: "1em" }}>
-                    <h3>List Customers</h3>
+                    <h3>Customers List</h3>
                 </Col>
                 <Col xs={24} md={12} xl={12} style={{ marginTop: "1em" }}>
                     <Input.Search
-                        placeholder="Search customer"
+                        placeholder="Search customers"
                         style={{ width: '100%' }}
-                        prefix={<SearchOutlined />}
                     />
                 </Col>
                 <Col xs={24} md={6} xl={6} style={{ marginTop: "1em" }}>
-                    <Button type="primary" onClick={showModal} icon={<PlusOutlined />} style={{ width: '100%' }}>
-                        Add Customer
-                    </Button>
+                    {isLoggedIn.role !== 'moderator' && (
+                        <Button type="primary" onClick={showModal} icon={<PlusOutlined />} style={{ width: '100%' }}>
+                            Add Customer
+                        </Button>
+                    )}
                 </Col>
             </Row>
-            <Table dataSource={customers} pagination={{ pageSize: 5 }} style={{ marginTop: "1rem" }} className="responsive-table">
+            <Table dataSource={customers} pagination={{ pageSize: 5 }} style={{ marginTop: "1rem" }}>
                 <Column title="#" render={(text, record, index) => index + 1} key="index" />
                 <Column
                     title="Avatar"
-                    key="imgAvatar"
+                    key="avatar"
                     render={(text, record) => (
-                        <Image width={50} src={record.img} />
+                        <Image width={50} src={record.imgUrl} />
                     )}
                 />
-                <Column title="Name Customer" dataIndex="name"/>
-                <Column title="Email" dataIndex="email"/>
-                <Column title="Role" render={(text, record) => (
-                        record.role == 1 ? "Admin" : "Khách hàng"
-                    )}/>
-                <Column
-                    title="Action"
-                    key="action"
-                    render={(text, record) => (
-                        <Space size="middle">
-                            <Button type="primary" ><EditOutlined /></Button>
-                            <Button style={{ backgroundColor: '#ff4d4f', borderColor: '#ff4d4f', color: "white" }} ><DeleteOutlined /></Button>
-                        </Space>
-                    )}
-                />
+                <Column title="Name" dataIndex="nameCustomer" key="nameCustomer" />
+                <Column title="Email" dataIndex="email" key="email" />
+                <Column title="Role" dataIndex="role" key="role" />
+
+                {/* Kiểm tra nếu người dùng không phải là Moderator, mới hiển thị các hành động */}
+                {isLoggedIn.role !== 'moderator' && (
+                    <Column
+                        title="Action"
+                        key="action"
+                        render={(text, record) => (
+                            <Space size="middle">
+                                <Button type="primary" onClick={() => handleEdit(record)}><EditOutlined /></Button>
+                                <Button style={{ backgroundColor: '#ff4d4f', borderColor: '#ff4d4f', color: "white" }} onClick={() => handleDelete(record)}><DeleteOutlined /></Button>
+                            </Space>
+                        )}
+                    />
+                )}
             </Table>
-        </div>
+            <Modal
+                title={customerEdit ? "Edit Customer" : "Add Customer"}
+                visible={visible}
+                onOk={handleOk}
+                onCancel={handleCancel}
+            >
+                <Form form={form} layout="vertical">
+                    <Form.Item
+                        label="Name"
+                        name="nameCustomer"
+                        rules={[{ required: true, message: 'Please enter the customer name!' }]}
+                    >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        label="Email"
+                        name="email"
+                        rules={[{ required: true, message: 'Please enter the customer email!' }, { type: 'email', message: 'Please enter a valid email!' }]}
+                    >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        label="Role"
+                        name="role"
+                        rules={[{ required: true, message: 'Please select a role!' }]}
+                    >
+                        <Select>
+                            {Object.keys(ROLES).map((key, index) => (
+                                <Option key={index} value={ROLES[key]}>{ROLES[key]}</Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+                    <Form.Item
+                        label="Avatar"
+                        name="imgUrl"
+                        rules={[{ required: true, message: 'Please upload an avatar!' }]}
+                    >
+                        <Upload {...uploadProps}>
+                            <Button icon={<PlusOutlined />}>Upload Avatar</Button>
+                        </Upload>
+                    </Form.Item>
+                    <Form.Item label="Preview">
+                        <Image src={previewImg} />
+                    </Form.Item>
+                </Form>
+            </Modal>
+            </>
+        ) : (
+            <>
+            <h1 style={{textAlign:"center", color:"gray"}}>You must be an Administrator to view this page.</h1>
+            </>
+        )}
+           
+        </>
     );
 }
 
