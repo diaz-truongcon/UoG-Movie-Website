@@ -1,32 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { Table, Button, Modal, Form, Input, Upload, Col, Space, Image, Row, message } from 'antd';
-import { PlusOutlined, SearchOutlined,DeleteOutlined,EditOutlined } from '@ant-design/icons';
-import { fetchDocuments,addDocument,updateDocument,deleteDocument } from "../../../Service/FirebaseService";
+import { PlusOutlined, SearchOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { addDocument, updateDocument, deleteDocument } from "../../../Service/FirebaseService";
+import { ContextCategories } from '../../../context/CategoriesContext';
 const { Column } = Table;
 
 function Categories() {
     const [form] = Form.useForm();
-    const [categories, setCategories] = useState([]);
-    const [update, setUpdate] = useState(false);
     const [visible, setVisible] = useState(false);
     const [categoryEdit, setCategoryEdit] = useState(null);
     const [previewImg, setPreviewImg] = useState(null);
     const [imgUpload, setImgUpload] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');  // Added state for search
+    const categories = useContext(ContextCategories);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const categoriesData = await fetchDocuments('Categories');
-            setCategories(categoriesData);
-        };
-        fetchData();
-    }, [update]);
-    
     const showModal = () => {
         setVisible(true);
     };
+    
     const handleCancel = () => {
         setVisible(false);
-        form.resetFields(); // Reset the form fields when the modal is closed
+        form.resetFields();
         setPreviewImg(null);
         setCategoryEdit(null);
     };
@@ -38,11 +32,9 @@ function Categories() {
                 await updateDocument('Categories', categoryEdit.id, values, imgUpload, categoryEdit.imgUrl);
                 message.success('Category updated successfully!');
             } else {
-                console.log(imgUpload);         
                 await addDocument('Categories', values, imgUpload);
                 message.success('Category added successfully!');
             }
-            setUpdate(!update);
             handleCancel();
         } catch (error) {
             message.error('Failed to save category. Please try again.');
@@ -51,7 +43,6 @@ function Categories() {
     
     const uploadProps = {
         beforeUpload: (file) => {
-            // Display the selected image
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = () => {
@@ -63,10 +54,7 @@ function Categories() {
     };
 
     const handleEdit = async (record) => {
-        // Display the modal with the selected category's information
-        form.setFieldsValue({
-            nameCategory: record.nameCategory,
-        });
+        form.setFieldsValue({ ...record });
         setPreviewImg(record.imgUrl);
         setCategoryEdit(record);
         setVisible(true);
@@ -82,13 +70,21 @@ function Categories() {
             async onOk() {
                 try {
                     await deleteDocument('Categories', record.id, record.imgUrl);
-                    setUpdate((prevUpdate) => !prevUpdate);
                 } catch (error) {
                     message.error('Failed to delete category. Please try again.');
                 }
             },
         });
     };
+
+    const handleSearch = (value) => {
+        setSearchTerm(value);  // Update the search term
+    };
+
+    // Filter categories based on search term
+    const filteredCategories = categories.filter((category) =>
+        category.nameCategory.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     return (
         <>
@@ -101,6 +97,7 @@ function Categories() {
                         placeholder="Search categories"
                         style={{ width: '100%' }}
                         prefix={<SearchOutlined />}
+                        onSearch={handleSearch}  // Trigger search when the user types
                     />
                 </Col>
                 <Col xs={24} md={6} xl={6} style={{ marginTop: "1em" }}>
@@ -109,7 +106,7 @@ function Categories() {
                     </Button>
                 </Col>
             </Row>
-            <Table dataSource={categories} pagination={{ pageSize: 5 }} style={{ marginTop: "1rem" }} className="responsive-table">
+            <Table dataSource={filteredCategories} pagination={{ pageSize: 5 }} style={{ marginTop: "1rem" }} className="responsive-table">
                 <Column title="#" render={(text, record, index) => index + 1} key="index" />
                 <Column
                     title="Img Category"
@@ -157,7 +154,7 @@ function Categories() {
                         <Image src={previewImg ? previewImg : 'https://firebasestorage.googleapis.com/v0/b/vam3d-15169.appspot.com/o/logo%2Flogoglx.svg?alt=media&token=496963e3-c862-4a5b-bd84-506ab09352ac'} />
                     </Form.Item>                 
                 </Form>
-                <Button  style={{border:"none"}} ></Button>
+                <Button style={{border:"none"}}></Button>
             </Modal>
         </>
     );

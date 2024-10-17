@@ -1,10 +1,12 @@
 import React from 'react';
 import { Row, Col, Image, Button, Typography, Card } from 'antd';
-
+import SlideBanner from '../Slideshow/SlideBanner';
+import "../../../styles/Demo.css"
 const { Title, Paragraph, Text } = Typography;
 function Welcome(props) {
     return (
         <div>
+            <SlideBanner/>
             <div className='giaitri'>
                 <Row gutter={[32, 32]}>
                     {/* Phần giới thiệu bên trái */}
@@ -29,6 +31,7 @@ function Welcome(props) {
                         <Row gutter={[16, 16]}>
                             <Col span={8}>
                                 <Image
+                                    class="animate__animated animate__bounce"
                                     src="https://assets.glxplay.io/web/responsive/w300/Eve_1000x1500.jpg" // URL ảnh phim
                                     alt="Eve Movie"
                                     preview={false}

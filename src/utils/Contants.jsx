@@ -5,6 +5,9 @@ export const ROLES = {
     USER: 'user',          // Người dùng thông thường
   };
 
+export const YOUR_SERVICE_ID = "service_h4ckrxu";
+export const YOUR_TEMPLATE_ID = "template_8gq28ak";
+export const YOUR_USER_ID = "urS8vrNGXJxNlfSiq";
 
 
 

@@ -1,32 +1,27 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Table, Button, Modal, Form, Input, Upload, Col, Space, Image, Row, message, Select } from 'antd';
 import { PlusOutlined, SearchOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { fetchDocuments, addDocument, updateDocument, deleteDocument } from "../../../Service/FirebaseService";
+import { addDocument, updateDocument, deleteDocument } from "../../../Service/FirebaseService";
 import { ContextCategories } from '../../../context/CategoriesContext';
 import { ContextPlans } from '../../../context/PlansContext'; // Assuming you have a Plans context
+import  { ContextMovies } from '../../../context/MoviesContext';
+import { Timestamp } from 'firebase/firestore';
 
 const { Column } = Table;
 const { Option } = Select;
 
 function Movies() {
     const [form] = Form.useForm();
-    const [movies, setMovies] = useState([]);
     const [update, setUpdate] = useState(false);
     const [visible, setVisible] = useState(false);
     const [movieEdit, setMovieEdit] = useState(null);
     const [previewImg, setPreviewImg] = useState(null);
     const [imgUpload, setImgUpload] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
     const [showPriceInput, setShowPriceInput] = useState(false); // State for showing price input
     const categories = useContext(ContextCategories);
-    const plans = useContext(ContextPlans); // Assuming you have a Plans context for VIP plans
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const moviesData = await fetchDocuments('Movies');
-            setMovies(moviesData);
-        };
-        fetchData();
-    }, [update]);
+    const plans = useContext(ContextPlans); 
+    const movies = useContext(ContextMovies);
 
     const showModal = () => {
         setVisible(true);
@@ -43,13 +38,24 @@ function Movies() {
     const handleOk = async () => {
         try {
             const values = await form.validateFields();
+    
+            // Thêm các trường mặc định
+            const additionalFields = {
+                likeCount: 0,
+                views: 0,
+                createdAt: Timestamp.now() // Ngày hiện tại dùng Firestore Timestamp
+            };
+    
+            const movieData = { ...values, ...additionalFields };
+    
             if (movieEdit) {
-                await updateDocument('Movies', movieEdit.id, values, imgUpload, movieEdit.imgUrl);
+                await updateDocument('Movies', movieEdit.id, movieData, imgUpload, movieEdit.imgUrl);
                 message.success('Movie updated successfully!');
             } else {
-                await addDocument('Movies', values, imgUpload);
+                await addDocument('Movies', movieData, imgUpload);
                 message.success('Movie added successfully!');
             }
+    
             setUpdate(!update);
             handleCancel();
         } catch (error) {
@@ -102,7 +108,13 @@ function Movies() {
             setShowPriceInput(false);
         }
     };
+    const handleSearch = (value) => {
+        setSearchTerm(value);  // Update the search term
+    };
 
+    const filteredMovies = movies.filter((movie) =>
+        movie.nameMovie.toLowerCase().includes(searchTerm.toLowerCase())
+    );
     return (
         <div>
             <Row gutter={16} align="middle">
@@ -114,6 +126,7 @@ function Movies() {
                         placeholder="Search movies"
                         style={{ width: '100%' }}
                         prefix={<SearchOutlined />}
+                        onSearch={handleSearch}
                     />
                 </Col>
                 <Col xs={24} md={6} xl={6} style={{ marginTop: "1em" }}>
@@ -122,7 +135,7 @@ function Movies() {
                     </Button>
                 </Col>
             </Row>
-            <Table dataSource={movies} pagination={{ pageSize: 5 }} style={{ marginTop: "1rem" }} className="responsive-table">
+            <Table dataSource={filteredMovies} pagination={{ pageSize: 5 }} style={{ marginTop: "1rem" }} className="responsive-table">
                 <Column title="#" render={(text, record, index) => index + 1} key="index" />
                 <Column
                     title="Img Movie"

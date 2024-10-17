@@ -3,6 +3,8 @@ import { Table, Button, Modal, Form, Input, Col, Space, Row, message, Select } f
 import { PlusOutlined, SearchOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { fetchDocuments, addDocument, updateDocument, deleteDocument } from "../../../Service/FirebaseService";
 import { ContextMovies } from '../../../context/MoviesContext';
+import { YOUR_SERVICE_ID, YOUR_TEMPLATE_ID, YOUR_USER_ID } from "../../../utils/Contants";
+import emailjs from 'emailjs-com';  // Thêm emailjs
 
 const { Column } = Table;
 const { Option } = Select;
@@ -42,12 +44,31 @@ function Episodes() {
             } else {
                 await addDocument('Episodes', values);
                 message.success('Episode added successfully!');
+                sendEmail(values);  // Gửi email sau khi thêm tập phim
             }
             setUpdate(!update);
             handleCancel();
         } catch (error) {
             message.error('Failed to save episode. Please try again.');
         }
+    };
+
+    const sendEmail = (episodeData) => {
+        const movie = movies.find(movie => movie.id === episodeData.movieId);
+    
+        const templateParams = {
+            movie_name: movie ? movie.nameMovie : '',
+            episode_number: episodeData.episodeNumber,
+            url_movie: episodeData.URLmovie,
+            to_email: 'tranthanhtiqn@gmail.com',  // Địa chỉ email nhận
+        };
+    
+        emailjs.send(YOUR_SERVICE_ID, YOUR_TEMPLATE_ID, templateParams, YOUR_USER_ID)
+            .then((response) => {
+                message.success('Email sent successfully!');
+            }, (error) => {
+                message.error('Failed to send email. Please try again.');
+            });
     };
 
     const handleEdit = (record) => {

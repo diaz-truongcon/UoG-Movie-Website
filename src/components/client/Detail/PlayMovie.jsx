@@ -68,8 +68,6 @@ function PlayMovie(props) {
     const formatCommentTime = (commentDate) => {
         const now = new Date();
         const createdAt = commentDate.toDate();
-        console.log("now" + now + "createdAt" + createdAt);
-
         // Tính toán chênh lệch thời gian
         const diffInMilliseconds = now - createdAt;
 
@@ -87,6 +85,7 @@ function PlayMovie(props) {
             return new Date(commentDate).toLocaleDateString(); // Hiển thị ngày bình luận nếu quá 10 ngày
         }
     };
+    
     const data = [
         {
             title: 'Giáo lý rồng',

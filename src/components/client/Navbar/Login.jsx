@@ -1,192 +1,240 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { Button, Modal, Typography, Divider, message, Input } from "antd";
-import { GoogleOutlined, PhoneOutlined } from "@ant-design/icons";
+import React, { useContext, useState } from 'react';
+import { Button, Modal, Typography, Divider, message, Input, Form } from "antd";
+import { GoogleOutlined, UserOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
 import { ContextCustomers } from "../../../context/CustomersContext";
-import { signInWithPopup, signInWithPhoneNumber, RecaptchaVerifier, getAuth } from "firebase/auth";
-import { googleProvider } from "../../../config/firebase";
+import { signInWithPopup } from "firebase/auth";
+import { googleProvider, auth } from "../../../config/firebase";
 import { CustomerLoginContext } from '../../../context/CustomerLoginContext';
-import { addDocument } from "../../../Service/FirebaseService";
+import { addDocumentById } from "../../../Service/FirebaseService";
 import { ROLES } from "../../../utils/Contants";
 
-function Login({ handleCancel, isModalVisible }) {
-    const customers = useContext(ContextCustomers);
-    const { setIsLoggedIn } = useContext(CustomerLoginContext);   
-    const [phoneNumber, setPhoneNumber] = useState('');
-    const [verificationCode, setVerificationCode] = useState('');
-    const [confirmationResult, setConfirmationResult] = useState(null);
-    const [isCodeSent, setIsCodeSent] = useState(false);
-    const auth = getAuth();
+const Login = ({ handleCancel, isModalVisible }) => {
+    const customers = useContext(ContextCustomers); // Lấy dữ liệu khách hàng từ Context
+    const { setIsLoggedIn } = useContext(CustomerLoginContext); // Cập nhật trạng thái đăng nhập
+    const [isSignUp, setIsSignUp] = useState(false);
+    const [form] = Form.useForm();
 
-    useEffect(() => {
-        if (auth) {
-            // Bật chế độ bỏ qua xác thực reCAPTCHA trong môi trường phát triển
-            auth.settings.appVerificationDisabledForTesting = true;
-    
-            // Kiểm tra xem appVerificationDisabledForTesting có tồn tại không
-            if ('appVerificationDisabledForTesting' in auth.settings) {
-                console.log('appVerificationDisabledForTesting tồn tại trong auth');
-            } else {
-                console.log('appVerificationDisabledForTesting không tồn tại trong auth');
-            }
-    
-            // Trì hoãn khởi tạo reCAPTCHA để đảm bảo phần tử DOM đã sẵn sàng
-            setTimeout(() => {
-                setupRecaptcha();
-            }, 1000);  // Chờ 1 giây để đảm bảo phần tử DOM sẵn sàng
+    // Handle login using email and password
+    const handleLogin = (values) => {
+        const { email, password } = values;
+        const existingCustomer = customers.find(customer => customer.id === email && customer.password === password);
+        if(!existingCustomer) {
+           message.error('Email hoặc mật khẩu không đúng!');
+           return;
         }
-    }, [auth]);
-    
-    const setupRecaptcha = () => {
-        const recaptchaElement = document.getElementById('recaptcha-container');
-    
-        if (!recaptchaElement) {
-            console.error('Phần tử recaptcha-container chưa có trong DOM.');
+        setIsLoggedIn(existingCustomer);
+        message.success('Đăng nhập thành công!');
+        handleCancel();
+    };
+
+    // Handle sign-up using email and password
+    const handleSignUp = async (values) => {
+        const { email, password, confirmPassword } = values;
+        // Validate if passwords match
+        if (password !== confirmPassword) {
+            message.error('Mật khẩu không trùng khớp!');
             return;
         }
-    
-        if (!window.recaptchaVerifier) {
-            try {
-                console.log("Khởi tạo RecaptchaVerifier");
-                window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
-                    size: 'normal',
-                    callback: (response) => {
-                        console.log('reCAPTCHA verified', response);
-                    },
-                    'expired-callback': () => {
-                        console.log('Mã reCAPTCHA đã hết hạn, vui lòng thử lại.');
-                    },
-                }, auth);
-            } catch (error) {
-                console.error('Lỗi khởi tạo reCAPTCHA:', error);
-            }
-        }
+       // Kiểm tra khách hàng đã tồn tại dựa trên email
+       const existingCustomer = customers.find(customer => customer.id === email);
+       if(existingCustomer) {
+            message.error('Email đã tồn tại. Vui lòng đăng nhập hoặc đăng ký với email khác.');
+            return;
+       }
+        // Tạo mới khách hàng
+        const newCustomer = {
+            imgUrl: "https://ss-images.saostar.vn/wp700/pc/1613810558698/Facebook-Avatar_3.png",
+            role: ROLES.USER, 
+            password: password
+        };
+
+        // Thêm khách hàng mới vào Firestore với email làm id
+        await addDocumentById('Customers', email, newCustomer);
+        newCustomer.id = email; // Gán email vào id của khách hàng mới
+        // Cập nhật trạng thái đăng nhập
+        setIsLoggedIn(newCustomer);
+        // Xoá thông tin đăng nhập và mật khẩu
+        form.resetFields();
+        // On success
+        message.success('Đăng ký thành công!');
+        handleCancel();
     };
-    
-    
-    
+
     // Đăng nhập với Google
     const signInWithGoogle = async () => {
         try {
+            // Thực hiện đăng nhập với Google
             const result = await signInWithPopup(auth, googleProvider);
-            const existingCustomer = customers.find((item) => item.email === result.user.email);
+            const user = result.user;
+
+            // Kiểm tra khách hàng đã tồn tại dựa trên email
+            const existingCustomer = customers.find(customer => customer.id === user.email);
             let loggedInCustomer;
 
+            // Nếu khách hàng chưa tồn tại, tạo mới trong cơ sở dữ liệu với email làm id
             if (!existingCustomer) {
                 const newCustomer = {
-                    nameCustomer: result.user.displayName,
-                    email: result.user.email,
-                    imgUrl: result.user.photoURL,
-                    role: ROLES.USER,  // Vai trò mặc định
+                    nameCustomer: user.displayName,
+                    imgUrl: user.photoURL,
+                    role: ROLES.USER, // Gán vai trò mặc định là USER
                 };
-
-                // Thêm khách hàng mới vào cơ sở dữ liệu
-                await addDocument('Customers', newCustomer);
-                loggedInCustomer = newCustomer;
+                // Thêm khách hàng mới vào Firestore với email làm id
+                await addDocumentById('Customers', user.email, newCustomer);
+                newCustomer.id = user.email;
+                loggedInCustomer = newCustomer; // Gán khách hàng mới vào biến
             } else {
-                loggedInCustomer = existingCustomer;
+                loggedInCustomer = existingCustomer; // Nếu đã tồn tại, gán dữ liệu cũ
             }
 
+            // Cập nhật trạng thái đăng nhập
             setIsLoggedIn(loggedInCustomer);
-            handleCancel();
-            message.success('Đăng nhập thành công');
+            handleCancel(); // Đóng modal
+            message.success('Đăng nhập thành công!');
         } catch (error) {
             message.error('Đăng nhập thất bại. Vui lòng thử lại.');
         }
     };
 
-    // Gửi mã xác minh đến số điện thoại
-    const sendVerificationCode = async () => {
-        setupRecaptcha();
-        try {
-            
-            
-            const result = await signInWithPhoneNumber(auth, phoneNumber, window.recaptchaVerifier);
-            setConfirmationResult(result);
-            console.log(result);
-            setIsCodeSent(true);
-            message.success('Mã xác minh đã được gửi!');
-        } catch (error) {
-            message.error('Gửi mã xác minh thất bại. Vui lòng thử lại.');
-        }
-    };
-
-    // Xác minh mã xác minh từ người dùng
-    const verifyCode = async () => {
-        try {
-            const result = await confirmationResult.confirm(verificationCode);
-            const existingCustomer = customers.find((item) => item.phone === result.user.phoneNumber);
-            let loggedInCustomer;
-
-            if (!existingCustomer) {
-                const newCustomer = {
-                    nameCustomer: result.user.phoneNumber,
-                    phone: result.user.phoneNumber,
-                    role: ROLES.USER,  // Vai trò mặc định
-                };
-
-                // Thêm khách hàng mới vào cơ sở dữ liệu
-                await addDocument('Customers', newCustomer);
-                loggedInCustomer = newCustomer;
-            } else {
-                loggedInCustomer = existingCustomer;
-            }
-
-            setIsLoggedIn(loggedInCustomer);
-            handleCancel();
-            message.success('Đăng nhập thành công');
-        } catch (error) {
-            message.error('Mã xác minh không hợp lệ. Vui lòng thử lại.');
-        }
-    };
-
     return (
-        <>
-            <Modal
-                title="ĐĂNG NHẬP"
-                open={isModalVisible}
-                footer={null}
-                onCancel={handleCancel}
-                centered
-                style={{ textAlign: 'center' }}
+        <Modal
+        title={isSignUp ? "Sign Up" : "Login"}
+        visible={isModalVisible}
+        footer={null}
+        onCancel={handleCancel}
+        centered
+        style={{ textAlign: 'center' }}
+    >
+        <Form
+            form={form}
+            layout="vertical"
+            onFinish={isSignUp ? handleSignUp : handleLogin}
+        >
+            {/* Email Input */}
+            <Form.Item
+                name="email"
+                rules={[{ required: true, message: 'Please enter your email!' }]}
             >
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                    <Button onClick={signInWithGoogle} icon={<GoogleOutlined />} style={{ background: "linear-gradient(to right, red, yellow, green)", border: "none", color: "gray", marginTop: "20px", marginBottom: "10px" }}>Tiếp tục với Google</Button>
-                    <Divider>
-                        Hoặc
-                    </Divider>
-                    {!isCodeSent ? (
-                        <>
-                            <Input
-                                placeholder="Nhập số điện thoại của bạn"
-                                value={phoneNumber}
-                                onChange={(e) => setPhoneNumber(e.target.value)}
-                                style={{ marginBottom: '10px' }}
-                            />
-                            <Button onClick={sendVerificationCode} icon={<PhoneOutlined />} style={{ backgroundColor: "blue", color: "white" }}>Tiếp tục với Số điện thoại</Button>
-                        </>
-                    ) : (
-                        <>
-                            <Input
-                                placeholder="Nhập mã xác minh"
-                                value={verificationCode}
-                                onChange={(e) => setVerificationCode(e.target.value)}
-                                style={{ marginBottom: '10px' }}
-                            />
-                            <Button onClick={verifyCode} style={{ backgroundColor: "green", color: "white" }}>Xác minh mã</Button>
-                        </>
-                    )}
-                    <div id="recaptcha-container"></div>
-                    <Typography.Paragraph style={{ marginTop: "20px", textAlign: "center" }}>
-                        Khi tiếp tục, bạn đã đồng ý <a href="">Quy chế sử dụng dịch vụ</a> của Galaxy Play.
-                    </Typography.Paragraph>
-                    <Typography.Paragraph style={{ textAlign: "center" }}>
-                        Hỗ trợ và chính sách bảo mật.
-                    </Typography.Paragraph>
-                </div>
-                <hr />
-            </Modal>
-        </>
+                <Input
+                    placeholder="e.g. example@mail.com"
+                    prefix={<UserOutlined />}
+                    style={{
+                        marginBottom: "10px",
+                        padding: "10px",
+                        borderRadius: "45px",
+                        border: "1px solid gray",
+                        fontSize: "16px",
+                        backgroundColor: "#f0f0f0"
+                    }}
+                />
+            </Form.Item>
+
+            {/* Password Input */}
+            <Form.Item
+                name="password"
+                rules={[{ required: true, message: 'Please enter your password!' }]}
+            >
+                <Input.Password
+                    placeholder="e.g. Example2006"
+                    style={{
+                        marginBottom: "10px",
+                        padding: "10px",
+                        borderRadius: "45px",
+                        border: "1px solid gray",
+                        fontSize: "16px",
+                        backgroundColor: "#f0f0f0"
+                    }}
+                    iconRender={visible => (visible ? <EyeInvisibleOutlined /> : <EyeInvisibleOutlined />)}
+                />
+            </Form.Item>
+
+            {/* Confirm Password Input - Only for Sign Up */}
+            {isSignUp && (
+                <Form.Item
+                    name="confirmPassword"
+                    dependencies={['password']}
+                    rules={[
+                        { required: true, message: 'Please confirm your password!' },
+                        ({ getFieldValue }) => ({
+                            validator(_, value) {
+                                if (!value || getFieldValue('password') === value) {
+                                    return Promise.resolve();
+                                }
+                                return Promise.reject(new Error('Mật khẩu không trùng khớp!'));
+                            },
+                        }),
+                    ]}
+                >
+                    <Input.Password
+                        placeholder="Re-enter your password"
+                        style={{
+                            marginBottom: "10px",
+                            padding: "10px",
+                            borderRadius: "45px",
+                            border: "1px solid gray",
+                            fontSize: "16px",
+                            backgroundColor: "#f0f0f0"
+                        }}
+                        iconRender={visible => (visible ? <EyeInvisibleOutlined /> : <EyeInvisibleOutlined />)}
+                    />
+                </Form.Item>
+            )}
+
+            {/* Forgot password link */}
+            {!isSignUp && (
+                <a href="#" style={{ alignSelf: "flex-end", marginBottom: "10px", color: "#aaa" }}>
+                    Forgot password?
+                </a>
+            )}
+
+            {/* Submit Button */}
+            <Button
+                htmlType="submit"
+                style={{
+                    backgroundColor: "#333",
+                    color: "white",
+                    borderRadius: "45px",
+                    padding: "10px",
+                    fontSize: "16px",
+                    marginBottom: "10px"
+                }}
+            >
+                {isSignUp ? "Sign Up" : "Login"}
+            </Button>
+        </Form>
+
+        {/* Toggle between login and sign-up */}
+        <Typography.Paragraph>
+            {isSignUp ? (
+                <>Already have an account? <a onClick={() => setIsSignUp(false)}>Login</a></>
+            ) : (
+                <>Don’t have an account? <a onClick={() => setIsSignUp(true)}>Sign up</a></>
+            )}
+        </Typography.Paragraph>
+
+        <Divider>Or</Divider>
+
+        {/* Google Login Button */}
+        <Button
+            onClick={signInWithGoogle}
+            icon={<GoogleOutlined />}
+            style={{
+                background: "white",
+                border: "1px solid gray",
+                borderRadius: "45px",
+                color: "black",
+                fontWeight: "bold",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "10px",
+                padding: "10px",
+                width: "100%"
+            }}
+        >
+            Sign in with Google
+        </Button>
+    </Modal>
     );
-}
+};
 
 export default Login;

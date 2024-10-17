@@ -1,26 +1,19 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Table, Button, Modal, Form, Input, Col, Space, message, Row } from 'antd';
 import { PlusOutlined, SearchOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { fetchDocuments, addDocument, updateDocument, deleteDocument } from "../../../Service/FirebaseService";
+import { addDocument, updateDocument, deleteDocument } from "../../../Service/FirebaseService";
 import { ContextMovies } from '../../../context/MoviesContext';
 import { ContextCustomers } from "../../../context/CustomersContext";
+import  {  ContextComments } from "../../../context/CommentsProvider";
 const { Column } = Table;
 function Comments() {
     const [form] = Form.useForm();
-    const [comments, setComments] = useState([]);
     const [update, setUpdate] = useState(false);
     const [visible, setVisible] = useState(false);
     const [commentEdit, setCommentEdit] = useState(null);
     const movies = useContext(ContextMovies);
     const customers = useContext(ContextCustomers);
-    useEffect(() => {
-        const fetchData = async () => {
-            const commentsData = await fetchDocuments('Comments');
-            setComments(commentsData);
-        };
-        fetchData();
-    }, [update]);
-
+    const comments = useContext(ContextComments);
     const showModal = () => {
         setVisible(true);
     };

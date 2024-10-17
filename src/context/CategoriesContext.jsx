@@ -1,24 +1,18 @@
-import React, { createContext, useState, useEffect } from 'react';
-import { fetchDocuments ,subscribeToCollection } from "../Service/FirebaseService";
+import React, { createContext, useState, useEffect } from "react";
+import { fetchDocumentsRealtime } from "../Service/FirebaseService";
+
 export const ContextCategories = createContext();
 
-
-// Tạo Provider cho Categories
 export const CategoriesProvider = ({ children }) => {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const categoriesData = await fetchDocuments('Categories');
-      setCategories(categoriesData);
-    };
-    fetchData();
-    // Thiết lập listener thời gian thực
-    const unsubscribe = subscribeToCollection('Categories', (newCategoriesData) => {
-      setCategories(newCategoriesData);
+    // Sử dụng fetchDocumentsRealtime để lắng nghe dữ liệu realtime
+    const unsubscribe = fetchDocumentsRealtime("Categories", (categoriesList) => {
+      setCategories(categoriesList);
     });
 
-    // Dọn dẹp listener khi component bị gỡ bỏ
+    // Hủy lắng nghe khi component bị unmount
     return () => unsubscribe();
   }, []);
 

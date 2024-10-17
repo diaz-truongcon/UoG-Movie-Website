@@ -1,18 +1,35 @@
 // src/services/firebaseService.js
-import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc, onSnapshot, query, where ,getDoc} from "firebase/firestore";
+import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc, onSnapshot, query, where , setDoc} from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { db, storage } from "../config/firebase";
 import { v4 as uuidv4 } from "uuid";
 
-// Fetch all documents from a given collection
+export const fetchDocumentsRealtime = (collectionName, callback) => {
+  const collectionRef = collection(db, collectionName);
+
+  // Lắng nghe dữ liệu thay đổi trong thời gian thực
+  const unsubscribe = onSnapshot(collectionRef, (querySnapshot) => {
+      const documents = [];
+      querySnapshot.forEach((doc) => {
+          documents.push({ id: doc.id, ...doc.data() });
+      });
+      
+      // Gọi callback với dữ liệu mới nhất
+      callback(documents);
+  });
+
+  // Hàm trả về unsubscribe để có thể dừng lắng nghe khi không cần nữa
+  return unsubscribe;
+};
+
 export const fetchDocuments = async (collectionName) => {
-    const collectionRef = collection(db, collectionName);
-    const querySnapshot = await getDocs(collectionRef);
-    const documents = [];
-    querySnapshot.forEach((doc) => {
-        documents.push({ id: doc.id, ...doc.data() });
-    });
-    return documents;
+  const collectionRef = collection(db, collectionName);
+  const querySnapshot = await getDocs(collectionRef);
+  const documents = [];
+  querySnapshot.forEach((doc) => {
+      documents.push({ id: doc.id, ...doc.data() });
+  });
+  return documents;
 };
 
 // Thêm tài liệu mới vào một bộ sưu tập cụ thể với tùy chọn tải lên hình ảnh
@@ -30,6 +47,23 @@ export const addDocument = async (collectionName, values, imgUpload) => {
         console.error('Error adding document:', error);
         throw error;
     }
+};
+
+// Hàm thêm tài liệu với email làm id
+export const addDocumentById = async (collectionName, id, values, imgUpload) => {
+  try {
+      if (imgUpload) {
+          const storageRef = ref(storage, `${collectionName}/${uuidv4()}`);
+          await uploadBytes(storageRef, imgUpload);
+          const imgUrl = await getDownloadURL(storageRef);
+          values.imgUrl = imgUrl; // Lưu URL vào đối tượng values
+      }
+      // Sử dụng setDoc với email làm id
+      await setDoc(doc(db, collectionName, id), values);
+  } catch (error) {
+      console.error('Error adding document:', error);
+      throw error;
+  }
 };
 
 // Update a document in a given collection with an optional image upload
@@ -100,64 +134,63 @@ export const getPackagesByPlan = async (idPlan) => {
     return packages;
 };
 
-
-export const checkVipEligibility = async (userId, movieId) => {
+// Function to check if a user is eligible to access content based on VIP level
+export const checkVipEligibility = async (userId, plans,movie) => {
     try {
-        // Tạo truy vấn lấy thông tin đăng ký gói VIP của người dùng
-        const subscriptionQuery = query(
-            collection(db, 'Subscriptions'), 
-            where('idUser', '==', userId)
-        );
-        const userSubscriptionSnapshot = await getDocs(subscriptionQuery);
-         
-        if (userSubscriptionSnapshot.empty) {
-            return false; // Người dùng chưa có gói VIP
-        }
-
-        const subscriptionData = userSubscriptionSnapshot.docs[0].data();
-        console.log(subscriptionData);
-        
-        // const { planId, startDate, endDate } = subscriptionData;
-
-        // const now = new Date();
-        // if (now < new Date(startDate) || now > new Date(endDate)) {
-        //     return false; 
-        // }
-
-        // Lấy thông tin gói VIP từ bảng Plans
-        const userPlanDoc = doc(db, 'Plans', planId);
-        const userPlanSnapshot = await getDoc(userPlanDoc);
-        if (!userPlanSnapshot.exists()) {
-            return false; // Gói VIP không tồn tại
-        }
-
-        const userPlanLevel = userPlanSnapshot.data().level;
-
-        // Lấy thông tin bộ phim từ bảng Movies
-        const movieDoc = doc(db, 'Movies', movieId);
-        const movieSnapshot = await getDoc(movieDoc);
-        if (!movieSnapshot.exists()) {
-            return false; // Phim không tồn tại
-        }
-
-        const requiredVipId = movieSnapshot.data().vip; // ID của gói VIP yêu cầu để xem phim
-
-        // Lấy cấp độ VIP yêu cầu của phim từ bảng Plans
-        const requiredVipPlanDoc = doc(db, 'Plans', requiredVipId);
-        const requiredVipPlanSnapshot = await getDoc(requiredVipPlanDoc);
-        if (!requiredVipPlanSnapshot.exists()) {
-            return false; // Gói VIP yêu cầu của phim không tồn tại
-        }
-
-        const requiredVipLevel = requiredVipPlanSnapshot.data().level;
-
-        // Kiểm tra nếu cấp độ VIP của người dùng đủ để xem phim
-        return userPlanLevel >= requiredVipLevel;
-
-    } catch (error) {
-        console.error('Error checking VIP eligibility:', error);
-        return false; // Trả về false nếu có lỗi
-    }
-};
-
+      // Fetch user's active subscription plans
+      const userPlans = await getPlansByUser(userId);
   
+      if (userPlans.length === 0) {
+        console.log("User does not have an active VIP subscription.");
+        return false; // No active VIP plan
+      }
+    const planLevel = plans.find(plan => plan.id === userPlans[0].plan).level ;
+    const movieLevel = plans.find(plan => plan.id === movie.vip).level ; 
+    const status = planLevel >= movieLevel ? true : false;
+
+    return status; // Trả về trạng thái eligibility
+    } catch (error) {
+      console.error("Error checking VIP eligibility:", error);
+      return false; // Return false in case of error
+    }
+  };
+
+  export const getPlansByUser = async (idUser, plans) => {
+    try {
+      // Tạo truy vấn để lấy dữ liệu của người dùng dựa trên idUser
+      const vipQuery = query(collection(db, "Subscriptions"), where("idUser", "==", idUser));
+      const querySnapshot = await getDocs(vipQuery);
+      // Lưu trữ thông tin VIP hợp lệ (chưa hết hạn)
+      const vipData = [];
+  
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const currentDate = new Date();
+        const expiryDate = data.expiryDate ? data.expiryDate.toDate() : null;
+  
+        // Chỉ lấy các gói VIP chưa hết hạn
+        if (expiryDate && expiryDate > currentDate) {
+          vipData.push({
+            id: doc.id,
+            ...data,
+          });
+        }
+      });
+  
+      // Duyệt qua các plan và tìm VIP có level cao nhất dựa vào vipData
+      const highestVipLevels = vipData.map(vip => {
+        const planForVip = plans.find(plan => plan.id === vip.plan);
+        return planForVip ? planForVip.level :  null; // Không tìm thấy kế hoạch tương ứng
+      });
+  
+      // Tìm cấp độ cao nhất từ các cấp độ VIP đã lấy
+      const maxVipLevel = highestVipLevels.reduce((highest, current) => {
+        return current > highest ? current : highest;
+      }, 0); // Bắt đầu với level thấp nhất là 0
+  
+      return maxVipLevel; // Trả về level cao nhất của VIP
+    } catch (error) {
+      console.error("Error fetching VIP plans:", error);
+      return null; // Trả về null nếu có lỗi
+    }
+  };

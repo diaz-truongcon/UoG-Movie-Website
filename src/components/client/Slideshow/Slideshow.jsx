@@ -4,11 +4,15 @@ import React, {  useContext } from 'react';
 import { ContextMovies } from '../../../context/MoviesContext';
 function Slideshow(props) {
     const movies = useContext(ContextMovies);
+        // Sắp xếp phim theo ngày phát hành mới nhất và lấy ra 4 phim đầu tiên
+        const latestMovies = movies
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 4); // Lấy 4 phim mới nhất
     return (
         <div className='carousel'>
             <Carousel autoplay >
                 {
-                     movies.map((element,index) => (
+                    latestMovies.map((element,index) => (
                         <div className='slide' key={index} >
                         <Image
                             src={element.imgUrl}

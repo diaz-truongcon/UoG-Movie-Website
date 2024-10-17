@@ -11,6 +11,29 @@
    background-color: aliceblue;
 }
 
+.index-number {
+   position: absolute;
+   top:0;
+   right:0;
+   font-size:5rem;
+   font-weight: bold;
+   transform: translate(10%,-50%);
+   background: #B8E1FC;
+   background: radial-gradient(circle farthest-corner at center center, #B8E1FC 0%, #231421 100%);
+   -webkit-background-clip: text;
+   -webkit-text-fill-color: transparent;  
+   z-index: 1;  
+ }
+
+ .ant-radio-group {
+     display: flex;
+     flex-direction: column;
+ }
+ .ant-radio-wrapper span.ant-radio+* {
+   flex: 1;
+   display: flex;
+   justify-content: space-between;
+ }
 /* laptop */
 @media screen and (min-width: 1025px) {
     .giaitri {

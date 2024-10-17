@@ -1,9 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import {
-  collection,
-  getDocs,
-} from "firebase/firestore";
-import { db } from "../config/firebase";
+import { fetchDocumentsRealtime } from '../Service/FirebaseService';
 
 // Tạo Context
 export const ContextMovies = createContext();
@@ -11,18 +7,15 @@ export const ContextMovies = createContext();
 // Tạo Provider cho Movies
 export const MoviesProvider = ({ children }) => {
   const [movies, setMovies] = useState([]);
-  const moviesCollectionRef = collection(db, "Movies");
 
   useEffect(() => {
-    const fetchMovies = async () => {
-      const querySnapshot = await getDocs(moviesCollectionRef);
-      const moviesData = [];
-      querySnapshot.forEach((doc) => {
-        moviesData.push({ id: doc.id, ...doc.data() });
-      });
-      setMovies(moviesData);
-    };
-    fetchMovies();
+    // Sử dụng fetchDocumentsRealtime để lắng nghe dữ liệu realtime
+    const unsubscribe = fetchDocumentsRealtime("Movies", (movieList) => {
+      setMovies(movieList);
+    });
+
+    // Hủy lắng nghe khi component bị unmount
+    return () => unsubscribe();
   }, []);
 
   return (

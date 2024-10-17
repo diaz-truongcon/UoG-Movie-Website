@@ -90,7 +90,7 @@ const HomeAdmin = ({ currentTheme, setCurrentTheme }) => {
             <Image preview={false} src={isLoggedIn.imgUrl} style={{ width: "50px", height: "50px", borderRadius: "50%" }} />
             <div style={{ paddingLeft: "0.5rem" }}>
               <h3>{isLoggedIn.name}</h3>
-              <p>{isLoggedIn.email}</p>
+              <p>{isLoggedIn.id}</p>
             </div>
           </div>
         )}

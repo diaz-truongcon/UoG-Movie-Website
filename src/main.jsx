@@ -6,28 +6,32 @@ import { MoviesProvider } from './context/MoviesContext';
 import { CustomersProvider } from './context/CustomersContext';
 import { EpisodesProvider } from './context/ContextEpisodes'; // Import EpisodesProvider
 import { CustomerLoginProvider } from './context/CustomerLoginContext';
-import { BrowserRouter} from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { PlansProvider } from './context/PlansContext'; // Import PlansProvider
 import { FeaturesProvider } from './context/ContextFeatures';
+import { CommentsProvider } from './context/CommentsProvider'; // Import CommentsProvider
 ReactDOM.render(
   <React.StrictMode>
-  <BrowserRouter>
-  <CustomerLoginProvider>
-    <CustomersProvider>
-      <MoviesProvider>
-        <CategoriesProvider>
-          <EpisodesProvider>
-         <PlansProvider>
-          <FeaturesProvider>
-           <App />
-          </FeaturesProvider>
-        </PlansProvider>        
-          </EpisodesProvider>
-        </CategoriesProvider>
-      </MoviesProvider>
-    </CustomersProvider>
-  </CustomerLoginProvider>
-  </BrowserRouter>
+    <BrowserRouter>
+      <CustomersProvider>
+        <MoviesProvider>
+          <CategoriesProvider>
+            <EpisodesProvider>
+              <PlansProvider>
+                <FeaturesProvider>
+                  <CommentsProvider>
+                    <CustomerLoginProvider>
+                      <App />
+                    </CustomerLoginProvider>
+                  </CommentsProvider>
+                </FeaturesProvider>
+              </PlansProvider>
+            </EpisodesProvider>
+          </CategoriesProvider>
+        </MoviesProvider>
+      </CustomersProvider>
+
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')
 );

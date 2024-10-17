@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
-import { Radio, Button, Row, Col, Card, Divider } from 'antd';
+import { Radio, Button, Row, Col, Card, Divider, message } from 'antd';
 import { useParams } from 'react-router-dom';
 import { CustomerLoginContext } from '../../../context/CustomerLoginContext'; // Context to get user info
 import { addDocument } from "../../../Service/FirebaseService"; // Function to add document to Firestore
@@ -45,6 +45,7 @@ const PaymentPage = () => {
         { title: 'Ví ShopeePay', icon: '🛒' },
         { title: 'VNPAY', icon: '💸' },
     ];
+console.log(selectedPackage);
 
     const handlePlanChange = (id) => {
         const newSelectedPackage = packages.find((pkg) => pkg.id === id);
@@ -57,7 +58,7 @@ const PaymentPage = () => {
 
     // PayPal options configuration
     const initialOptions = {
-        "client-id": "Ae1gNvniG4xbGsr_e5joj0m5WGau5kisTS_4VWlz82K9c4FnKE-kE-OhXYyEbBk-8IM_k3BGrNisndJm",
+        "client-id": "Afvf_3ThHxeE4RD-KYEvws_gV6XvT2OzDbbZLnxY7HbUj1ShElGTlwvyXRNE9D9OsXNlp5JxBjXKz9zo",
         currency: "USD",
         intent: "capture"
     };
@@ -70,7 +71,7 @@ const createSubscription = async (transactionId) => {
 
         const startDate = new Date();
         const expiryDate = new Date();
-        expiryDate.setMonth(startDate.getMonth() + (currentPackage.time || 1)); 
+        expiryDate.setMonth(startDate.getMonth() + (parseInt(currentPackage.time) || 1)); 
 
         await addDocument('Subscriptions', {
             idUser: isLoggedIn.id,
@@ -79,16 +80,13 @@ const createSubscription = async (transactionId) => {
             expiryDate: expiryDate,
             paymentMethod: paymentMethod,
             transactionId: transactionId,
-            status: true
         });
-
-        alert('Subscription created successfully!');
+    message.success('Subscription created successfully!');
     } catch (error) {
         console.error('Error creating subscription:', error);
         alert('Failed to create subscription. Please try again.');
     }
 };
-
 
     return (
         <div style={{ padding: '20px', backgroundColor: '#f2f2f2', paddingTop: '100px' }}>
@@ -96,15 +94,22 @@ const createSubscription = async (transactionId) => {
                 <Col span={12}>
                     <Card title="Chọn Gói Đăng Ký">
                         <Radio.Group value={selectedPackage?.id || ""} style={{ width: '100%' }}>
-                            {packages.map((pkg) => (
+                            {packages.sort((a,b) => a.time - b.time).map((pkg) => (
                                 <div onChange={() => handlePlanChange(pkg.id)} key={pkg.id} style={{ marginBottom: '10px' }}>
                                     <Radio value={pkg.id} style={{ display: 'flex', width: '100%' }}>
-                                        <span>{pkg.time} Tháng</span>
-                                        {pkg.discount > 0 && (
-                                            <span style={{ color: 'red', marginLeft: '30px' }}>
+                                        <div>
+                                            <p><b>{pkg.time} Tháng</b></p>
+                                            {pkg.discount > 0 && (
+                                            <p style={{ color: 'red' }}>
                                                 {`Giảm ${pkg.discount}%`}
-                                            </span>
+                                            </p>
                                         )}
+                                        </div>
+                                        <div>
+                                            <p><b>{(selectedPlan?.pricePerMonth * pkg.time - selectedPlan?.pricePerMonth * pkg.time * pkg.discount / 100).toLocaleString('vi-VN')}<sup>VNĐ</sup></b></p>
+                                            <p style={{textDecoration:"line-through",color:"gray"}}>{(selectedPlan?.pricePerMonth*pkg.time).toLocaleString('vi-VN')}<sup>VNĐ</sup></p>
+                                        </div>
+                                        
                                     </Radio>
                                 </div>
                             ))}
@@ -112,13 +117,13 @@ const createSubscription = async (transactionId) => {
                     </Card>
 
                     <Card style={{ marginTop: '20px' }} title="THÔNG TIN THANH TOÁN">
-                        <p>Tài khoản: 0378 486 992</p>
+                        <p>Tài khoản: {isLoggedIn.id}</p>
                         <p>Tên gói: {selectedPlan?.title || "Chưa chọn gói"}</p>
-                        <p>Ngày hiệu lực: {new Date().toLocaleDateString()}</p>
-                        <p>Ngày hết hạn: {new Date(new Date().setMonth(new Date().getMonth() + (selectedPackage?.time || 1))).toLocaleDateString()}</p>
+                        <p>Ngày hiệu lực: {new Date().toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}</p>
+                        <p>Ngày hết hạn: {new Date(new Date().setMonth(new Date().getMonth() + (parseInt(selectedPackage?.time) || 0))).toLocaleDateString('vi-VN')}</p>
                         <p>Khuyến mãi: {selectedPackage?.discount || '0%'}</p>
                         <Divider />
-                        <p><strong>Tổng cộng: {(selectedPlan?.pricePerMonth * (1 - (selectedPackage?.discount || 0) / 100)).toLocaleString()}₫</strong></p>
+                        <p><strong>Tổng cộng: {(selectedPlan?.pricePerMonth * selectedPackage?.time - selectedPlan?.pricePerMonth * selectedPackage?.time*selectedPackage?.discount/100 ).toLocaleString()}₫</strong></p>
                     </Card>
                 </Col>
                 <Col span={12}>

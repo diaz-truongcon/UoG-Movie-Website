@@ -1,35 +1,56 @@
-import React, { useState } from 'react';
-import { Card, Avatar, Button, Modal, Form, Input, Space, message } from 'antd';
-import { EditOutlined, UserOutlined, MailOutlined, PhoneOutlined } from '@ant-design/icons';
+import React, { useState, useContext } from 'react';
+import { Card, Avatar, Button, Modal, Form, Input, Upload, Image, message } from 'antd';
+import { EditOutlined, MailOutlined, PhoneOutlined, PlusOutlined } from '@ant-design/icons';
+import { CustomerLoginContext } from '../../../context/CustomerLoginContext'; // Đường dẫn context login
+import { updateDocument } from '../../../Service/FirebaseService'; // Hàm update document (đường dẫn firebase)
 
 const Profile = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [form] = Form.useForm();
-    const [userData, setUserData] = useState({
-        name: 'John Doe',
-        email: 'john.doe@example.com',
-        phone: '123-456-7890',
-        avatarUrl: 'https://topxephang.com/wp-content/uploads/2018/01/pham-bang-bang.jpg', // You can set a default URL for avatar here
-    });
+    const [previewImg, setPreviewImg] = useState(null); // Ảnh preview
+    const [imgUpload, setImgUpload] = useState(null); // Lưu ảnh được upload
+    const { isLoggedIn, setIsLoggedIn } = useContext(CustomerLoginContext); // Context quản lý trạng thái đăng nhập
 
     const showModal = () => {
-        setIsModalVisible(true);
-        form.setFieldsValue(userData); // Set initial values to current user data
+        if (isLoggedIn) {
+            setIsModalVisible(true);
+            form.setFieldsValue(isLoggedIn); // Đặt giá trị ban đầu từ dữ liệu user đã login
+        } else {
+            message.warning('Vui lòng đăng nhập để chỉnh sửa hồ sơ.');
+        }
     };
 
     const handleOk = async () => {
         try {
-            const values = await form.validateFields();
-            setUserData(values); // Update the user data with form values
-            message.success('Profile updated successfully!');
-            setIsModalVisible(false);
+            const values = await form.validateFields(); // Lấy dữ liệu từ form
+            // Loại bỏ id khỏi values để tránh update giá trị này
+            values.role = isLoggedIn.role;
+            const { id, ...updatedValues } = values;
+            // Gọi hàm updateDocument với các tham số cần thiết
+            await updateDocument('Customers', isLoggedIn.id, updatedValues, imgUpload);
+            values.imgUrl = previewImg;
+            setIsLoggedIn(values);
+            message.success('Hồ sơ đã được cập nhật thành công!');
+            setIsModalVisible(false); // Đóng modal sau khi cập nhật thành công
         } catch (error) {
-            message.error('Please fill in all required fields.');
+            message.error('Vui lòng điền đầy đủ các trường bắt buộc.');
         }
     };
 
     const handleCancel = () => {
         setIsModalVisible(false);
+    };
+
+    const uploadProps = {
+        beforeUpload: (file) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                setPreviewImg(reader.result);
+            };
+            setImgUpload(file);
+            return false;
+        },
     };
 
     return (
@@ -38,66 +59,76 @@ const Profile = () => {
                 style={{ width: 400 }}
                 actions={[
                     <Button type="primary" icon={<EditOutlined />} onClick={showModal}>
-                        Edit Profile
+                        Chỉnh sửa hồ sơ
                     </Button>,
                 ]}
             >
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
                     <Avatar
                         size={100}
-                        src={userData.avatarUrl || null}
-                        icon={!userData.avatarUrl && <UserOutlined />}
+                        src={previewImg || isLoggedIn.imgUrl || null} // Hiển thị ảnh preview nếu có, nếu không thì hiển thị ảnh hiện tại
                     />
                 </div>
                 <div style={{ textAlign: 'center' }}>
-                    <h2>{userData.name}</h2>
+                    <h2>{isLoggedIn?.nameCustomer}</h2>
                     <p>
-                        <MailOutlined /> {userData.email}
+                        <MailOutlined /> {isLoggedIn.id} {/* Hiển thị email */}
                     </p>
                     <p>
-                        <PhoneOutlined /> {userData.phone}
+                        <PhoneOutlined /> {isLoggedIn?.phone}
                     </p>
                 </div>
             </Card>
 
-            {/* Modal for Editing Profile */}
+            {/* Modal để chỉnh sửa thông tin cá nhân */}
             <Modal
-                title="Edit Profile"
+                title="Chỉnh sửa hồ sơ"
                 visible={isModalVisible}
                 onOk={handleOk}
                 onCancel={handleCancel}
-                okText="Save"
+                okText="Lưu"
             >
-                <Form form={form} layout="vertical" initialValues={userData}>
+                <Form form={form} layout="vertical" initialValues={isLoggedIn}>
                     <Form.Item
-                        label="Name"
-                        name="name"
-                        rules={[{ required: true, message: 'Please enter your name!' }]}
+                        label="Tên"
+                        name="nameCustomer"
+                        rules={[{ required: true, message: 'Vui lòng nhập tên!' }]}
                     >
-                        <Input placeholder="Enter your name" />
+                        <Input placeholder="Nhập tên của bạn" />
+                    </Form.Item>
+                    {/* Email chỉ được hiển thị và không thể chỉnh sửa */}
+                    <Form.Item
+                        label="Email (ID)"
+                        name="id"
+                    >
+                        <Input disabled value={isLoggedIn.id} />
                     </Form.Item>
                     <Form.Item
-                        label="Email"
-                        name="email"
-                        rules={[
-                            { required: true, message: 'Please enter your email!' },
-                            { type: 'email', message: 'Please enter a valid email!' },
-                        ]}
+                        label="Mật khẩu"
+                        name="password"
+                        rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
                     >
-                        <Input placeholder="Enter your email" />
+                        <Input.Password placeholder="Nhập mật khẩu của bạn" />
                     </Form.Item>
+
                     <Form.Item
-                        label="Phone"
+                        label="Số điện thoại"
                         name="phone"
-                        rules={[{ required: true, message: 'Please enter your phone number!' }]}
+                        rules={[{ required: true, message: 'Vui lòng nhập số điện thoại!' }]}
                     >
-                        <Input placeholder="Enter your phone number" />
+                        <Input placeholder="Nhập số điện thoại của bạn" />
                     </Form.Item>
                     <Form.Item
-                        label="Avatar URL"
-                        name="avatarUrl"
+                        label="Avatar"
+                        name="imgUrl"
+                        rules={[{ required: true, message: 'Please upload an avatar!' }]}
                     >
-                        <Input placeholder="Enter your avatar URL (optional)" />
+                        <Upload {...uploadProps}>
+                            <Button icon={<PlusOutlined />}>Upload Avatar</Button>
+                        </Upload>
+                    </Form.Item>
+                    <Form.Item label="Preview">
+                        <Image src={previewImg} />
                     </Form.Item>
                 </Form>
             </Modal>

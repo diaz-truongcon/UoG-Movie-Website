@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { fetchDocuments, subscribeToCollection } from "../Service/FirebaseService";
+import { fetchDocumentsRealtime} from "../Service/FirebaseService";
 
 export const ContextFeatures = createContext();
 
@@ -8,17 +8,12 @@ export const FeaturesProvider = ({ children }) => {
   const [features, setFeatures] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const featuresData = await fetchDocuments('Features');
-      setFeatures(featuresData);
-    };
-    fetchData();
-
-    // Thiết lập listener thời gian thực
-    const unsubscribe = subscribeToCollection('Features', (newFeaturesData) => {
-      setFeatures(newFeaturesData);
+    // Sử dụng fetchDocumentsRealtime để lắng nghe dữ liệu realtime
+    const unsubscribe = fetchDocumentsRealtime("Features", (featuresList) => {
+      setFeatures(featuresList);
     });
-    // Dọn dẹp listener khi component bị gỡ bỏ
+
+    // Hủy lắng nghe khi component bị unmount
     return () => unsubscribe();
   }, []);
 

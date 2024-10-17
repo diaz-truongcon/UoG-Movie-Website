@@ -12,6 +12,7 @@ import Favorites from '../Favorite/Favorites';
 import Search from '../Search/Search';
 import AccountPage from '../AccountPage/AccountPage';
 import FAQ from '../Support/FAQ';
+import "../../../styles/Client.css";
 function Home() {
 
   return (

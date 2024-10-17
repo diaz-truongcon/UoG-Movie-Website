@@ -1,16 +1,16 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { fetchDocumentsRealtime } from "../Service/FirebaseService";
 
-export const ContextPlans = createContext();
+export const ContextComments = createContext();
 
-// Tạo Provider cho Plans
-export const PlansProvider = ({ children }) => {
-  const [plans, setPlans] = useState([]);
+// Tạo Provider cho Comments
+export const CommentsProvider = ({ children }) => {
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
     // Sử dụng fetchDocumentsRealtime để lắng nghe dữ liệu realtime
-    const unsubscribe = fetchDocumentsRealtime("Plans", (planList) => {
-      setPlans(planList);
+    const unsubscribe = fetchDocumentsRealtime("Comments", (commentsList) => {
+      setComments(commentsList);
     });
 
     // Hủy lắng nghe khi component bị unmount
@@ -18,8 +18,8 @@ export const PlansProvider = ({ children }) => {
   }, []);
 
   return (
-    <ContextPlans.Provider value={plans}>
+    <ContextComments.Provider value={comments}>
       {children}
-    </ContextPlans.Provider>
+    </ContextComments.Provider>
   );
 };
