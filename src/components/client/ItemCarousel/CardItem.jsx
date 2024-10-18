@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Col, Image, Button, Tooltip, message } from 'antd';
 import { PlayCircleOutlined, HeartOutlined, PlusOutlined, MinusOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { addDocument, deleteDocument, fetchDocuments, updateDocument, getPlansByUser } from '../../../Service/FirebaseService';
+import { addDocument, deleteDocument, fetchDocuments, updateDocument, checkVipEligibility } from '../../../Service/FirebaseService';
 import { CustomerLoginContext } from '../../../context/CustomerLoginContext';
 import { ContextPlans } from '../../../context/PlansContext';
 import IconLikes from './IconLikes';
@@ -12,12 +12,14 @@ function CardItem({ element, index, setIsPaused }) {
     const plans = useContext(ContextPlans);
     const navigate = useNavigate(); // Sử dụng useNavigate để điều hướng
     const [hoveredIndex, setHoveredIndex] = useState(null);
+
     const handleClick = async (movie) => {
         if (!isLoggedIn) {
             message.warning('Bạn cần đăng nhập để xem phim');
             return;
         }
-        const status = await getPlansByUser(isLoggedIn.id, plans, movie);
+        
+        const status = await checkVipEligibility(isLoggedIn.id, plans, movie);
 
         if (status) {
             navigate(`/moviedetail/${movie.id}`);

@@ -46,12 +46,12 @@ function Movies() {
                 createdAt: Timestamp.now() // Ngày hiện tại dùng Firestore Timestamp
             };
     
-            const movieData = { ...values, ...additionalFields };
-    
             if (movieEdit) {
-                await updateDocument('Movies', movieEdit.id, movieData, imgUpload, movieEdit.imgUrl);
+                await updateDocument('Movies', movieEdit.id, values, imgUpload, movieEdit.imgUrl);
                 message.success('Movie updated successfully!');
             } else {
+                const movieData = { ...values, ...additionalFields };
+
                 await addDocument('Movies', movieData, imgUpload);
                 message.success('Movie added successfully!');
             }

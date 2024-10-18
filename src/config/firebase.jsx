@@ -5,13 +5,13 @@ import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 
 // Your Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyDUCkwJ10CdfHaEhhuqL1FOQUO3XNj-Vr8",
-    authDomain: "uog-movie-website.firebaseapp.com",
-    projectId: "uog-movie-website",
-    storageBucket: "uog-movie-website.appspot.com",
-    messagingSenderId: "912240401461",
-    appId: "1:912240401461:web:f5fb92846cfa153f7e257c",
-    measurementId: "G-673ZCET60W"
+    apiKey: "AIzaSyC4JmCWLy8wGbCD7_jG_3_aMCeSPZeI83o",
+    authDomain: "netphim-acb5c.firebaseapp.com",
+    projectId: "netphim-acb5c",
+    storageBucket: "netphim-acb5c.appspot.com",
+    messagingSenderId: "975540903901",
+    appId: "1:975540903901:web:a2e6b2ec8742a59e5c2034",
+    measurementId: "G-304DW54N2L"
 };
 
 // Initialize Firebase

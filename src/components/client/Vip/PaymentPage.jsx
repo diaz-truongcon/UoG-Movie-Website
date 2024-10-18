@@ -58,7 +58,7 @@ console.log(selectedPackage);
 
     // PayPal options configuration
     const initialOptions = {
-        "client-id": "Afvf_3ThHxeE4RD-KYEvws_gV6XvT2OzDbbZLnxY7HbUj1ShElGTlwvyXRNE9D9OsXNlp5JxBjXKz9zo",
+        "client-id": "Ae1gNvniG4xbGsr_e5joj0m5WGau5kisTS_4VWlz82K9c4FnKE-kE-OhXYyEbBk-8IM_k3BGrNisndJm",
         currency: "USD",
         intent: "capture"
     };

@@ -138,16 +138,13 @@ export const getPackagesByPlan = async (idPlan) => {
 export const checkVipEligibility = async (userId, plans,movie) => {
     try {
       // Fetch user's active subscription plans
-      const userPlans = await getPlansByUser(userId);
-  
-      if (userPlans.length === 0) {
+      const userPlans = await getPlansByUser(userId,plans);     
+      if (userPlans == 0) {
         console.log("User does not have an active VIP subscription.");
         return false; // No active VIP plan
-      }
-    const planLevel = plans.find(plan => plan.id === userPlans[0].plan).level ;
+      } 
     const movieLevel = plans.find(plan => plan.id === movie.vip).level ; 
-    const status = planLevel >= movieLevel ? true : false;
-
+    const status = userPlans >= movieLevel ? true : false;
     return status; // Trả về trạng thái eligibility
     } catch (error) {
       console.error("Error checking VIP eligibility:", error);
