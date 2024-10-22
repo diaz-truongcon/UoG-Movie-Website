@@ -14,6 +14,7 @@ function Comments() {
     const movies = useContext(ContextMovies);
     const customers = useContext(ContextCustomers);
     const comments = useContext(ContextComments);
+    const [searchTerm, setSearchTerm] = useState(''); 
     const showModal = () => {
         setVisible(true);
     };
@@ -40,17 +41,6 @@ function Comments() {
         }
     };
 
-    const handleEdit = async (record) => {
-        form.setFieldsValue({
-            content: record.content,
-            createdAt: record.createdAt,
-            idCustomer: record.idCustomer,
-            idMovie: record.idMovie,
-        });
-        setCommentEdit(record);
-        setVisible(true);
-    };
-
     const handleDelete = async (record) => {
         Modal.confirm({
             title: 'Confirm Delete',
@@ -68,6 +58,14 @@ function Comments() {
             },
         });
     };
+// Filter comments based on search term
+const filteredComments = comments.filter(comment => {
+    const customer = customers.find(customer => customer.id === comment.idCustomer);
+    const username = customer ? customer.username.toLowerCase() : '';
+    const content = comment.content.toLowerCase();
+    const searchLower = searchTerm.toLowerCase();
+    return content.includes(searchLower) || username.includes(searchLower);
+});
 
     return (
         <>
@@ -78,6 +76,7 @@ function Comments() {
                 <Col xs={24} md={12} xl={12} style={{ marginTop: "1em" }}>
                     <Input.Search
                         placeholder="Search comments"
+                        onChange={(e) => setSearchTerm(e.target.value)}
                         style={{ width: '100%' }}
                         prefix={<SearchOutlined />}
                     />
@@ -88,7 +87,7 @@ function Comments() {
                     </Button>
                 </Col>
             </Row>
-            <Table dataSource={comments} pagination={{ pageSize: 5 }} style={{ marginTop: "1rem" }} className="responsive-table">
+            <Table dataSource={filteredComments} pagination={{ pageSize: 5 }} style={{ marginTop: "1rem" }} className="responsive-table">
                 <Column title="#" render={(text, record, index) => index + 1} key="index" />
                 <Column title="Content" dataIndex="content" key="content" />
                 <Column
@@ -106,7 +105,7 @@ function Comments() {
                     key="idCustomer"
                     render={(text, record) => {
                         const customer = customers.find(customer => customer.id === record.idCustomer);
-                        return customer ? customer.nameCustomer : 'Unknown';
+                        return customer ? customer.username : 'Unknown';
                     }}
                 />
                 <Column
@@ -123,7 +122,6 @@ function Comments() {
                     key="action"
                     render={(text, record) => (
                         <Space size="middle">
-                            <Button type="primary" onClick={() => handleEdit(record)}><EditOutlined /></Button>
                             <Button style={{ backgroundColor: '#ff4d4f', borderColor: '#ff4d4f', color: "white" }} onClick={() => handleDelete(record)}><DeleteOutlined /></Button>
                         </Space>
                     )}

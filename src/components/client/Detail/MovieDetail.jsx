@@ -21,10 +21,6 @@ const MovieDetail = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [id, movies]);
 
-  const handleAddToList = () => {
-    message.success('Movie added to your list!');
-  };
-
   const handleWatchMovie = async () => {
     try {
       if (isLoggedIn) {

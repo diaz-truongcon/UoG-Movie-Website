@@ -4,8 +4,10 @@ import { FireOutlined, StarOutlined } from '@ant-design/icons';
 import { useParams } from 'react-router-dom';
 import { ContextEpisodes } from "../../../context/ContextEpisodes";
 import { CustomerLoginContext } from '../../../context/CustomerLoginContext';
-import { fetchDocuments, addDocument } from "../../../Service/FirebaseService";
+import { fetchDocuments, addDocument, updateDocument } from "../../../Service/FirebaseService";
 import { ContextCustomers } from "../../../context/CustomersContext";
+import { ContextWatchHistory } from "../../../context/WatchHistoryProvider";
+import { getTopViewedMovies } from '../../../utils/ContantsFunctions';
 const { TextArea } = Input;
 const { Title, Paragraph, Text } = Typography;
 
@@ -19,12 +21,16 @@ function PlayMovie(props) {
     const episodes = useContext(ContextEpisodes);
     const { isLoggedIn } = useContext(CustomerLoginContext);
     const customers = useContext(ContextCustomers);
+    const watchHistories = useContext(ContextWatchHistory);
+    const topViewedMovies = getTopViewedMovies(5);
+
     useEffect(() => {
         const listEpisode = episodes
             .filter((element) => element.movieId === id)
             .sort((a, b) => Number(a.episodeNumber.replace(/\D/g, '')) - Number(b.episodeNumber.replace(/\D/g, '')));
         setEpisodesByMovie(listEpisode);
         setMovie(listEpisode[0]);
+        handleWatchHistory(listEpisode[0]);
     }, [id]);
 
     useEffect(() => {
@@ -86,50 +92,28 @@ function PlayMovie(props) {
         }
     };
     
-    const data = [
-        {
-            title: 'Giáo lý rồng',
-            subtitle: "Dragon's Dogma",
-            episodes: '07/07',
-            views: 105,
-            image: 'https://cdn.galaxycine.vn/media/2024/8/29/750_1724920120678.jpg'
-        },
-        {
-            title: 'Ookami to Koushinryou: Merchant Meets the Wise Wolf',
-            subtitle: 'Spice and ...',
-            episodes: '20/25',
-            views: 105,
-            image: 'https://cdn.galaxycine.vn/media/2024/8/29/750_1724920120678.jpg'
-        },
-        {
-            title: 'Tokidoki Bosotto Russia-go de Dereru Tonari no Alya-san',
-            subtitle: 'Roshidere | ...',
-            episodes: '10/??',
-            views: 105,
-            image: 'https://cdn.galaxycine.vn/media/2024/8/29/750_1724920120678.jpg'
-        },
-        {
-            title: 'Make Heroine ga Oosugiru!',
-            subtitle: 'Makeine | ...',
-            episodes: '09/12',
-            views: 105,
-            image: 'https://cdn.galaxycine.vn/media/2024/8/29/750_1724920120678.jpg'
-        },
-        {
-            title: 'Kami no Tou: Ouji no Kikan',
-            subtitle: 'Sin-ui Tap ...',
-            episodes: '10/??',
-            views: 90,
-            image: 'https://cdn.galaxycine.vn/media/2024/8/29/750_1724920120678.jpg'
-        },
-        {
-            title: 'Yumeria',
-            subtitle: 'Yumeria',
-            episodes: '12/12',
-            views: 75,
-            image: 'https://cdn.galaxycine.vn/media/2024/8/29/750_1724920120678.jpg'
+    const handleWatchHistory = async (episode) => {
+        if (isLoggedIn) {
+            const watchHistory = {
+                idMovie: id,
+                idCustomer: isLoggedIn.id,
+                episodeNumber: episode.episodeNumber,
+                watchedAt: new Date()
+            };
+            const history = watchHistories?.find(
+                (history) => history.idMovie === id && history.idCustomer === isLoggedIn.id
+            );
+            if (history) {
+                await updateDocument('WatchHistory', history.id, watchHistory);
+            } else {
+                await addDocument('WatchHistory', watchHistory);
+            }
         }
-    ];
+    };
+const  getEpisode = (episode) => {
+    setMovie(episode);
+    handleWatchHistory(episode);
+}
     return (
         <div>
             {/* Movie player */}
@@ -145,7 +129,7 @@ function PlayMovie(props) {
             <div style={{ padding: '20px' }}>
                 <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
                     {episodesByMovie.map((episode, index) => (
-                        <Col key={index} onClick={() => setMovie(episode)}>
+                        <Col key={index} onClick={() => getEpisode(episode)}>
                             <Button type="primary" style={{
                                 background: movie === episode
                                     ? "linear-gradient(#ff0844 , #ffb199)" // Màu đỏ khi bấm vào tập
@@ -208,18 +192,18 @@ function PlayMovie(props) {
                         <Title level={4} style={{ margin: 0, color: "yellow" }}><StarOutlined /> TOP BẢNG XẾP HẠNG</Title>
                         <List
                             itemLayout="horizontal"
-                            dataSource={data}
+                            dataSource={topViewedMovies}
                             renderItem={item => (
                                 <List.Item style={{ borderBottom: "1px solid white" }}>
                                     <List.Item.Meta
-                                        avatar={<Avatar shape="square" size={64} src={item.image} />}
+                                        avatar={<Avatar shape="square" size={64} src={item.imgUrl} />}
                                         title={
                                             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                                 <Typography.Title level={4} style={{ margin: 0, color: 'white' }}>
-                                                    {item.title}
+                                                    {item.nameMovie}
                                                 </Typography.Title>
                                                 <Badge
-                                                    count={item.episodes}
+                                                    count={item.duration}
                                                     style={{
                                                         backgroundColor: '#d4380d',
                                                         color: 'white',
@@ -230,7 +214,7 @@ function PlayMovie(props) {
                                         }
                                         description={
                                             <>
-                                                <Typography.Text style={{ margin: 0, color: 'white' }}>{item.subtitle}</Typography.Text>
+                                                <Typography.Text style={{ margin: 0, color: 'white' }}>{item.describe.length > 60 ? `${item.describe.substring(0, 60)}...` : item.describe}</Typography.Text>
                                                 <div>
                                                     <Typography.Text type="secondary" style={{ margin: 0, color: 'white' }}>
                                                         <FireOutlined /> {item.views} Lượt xem

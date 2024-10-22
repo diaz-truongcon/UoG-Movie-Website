@@ -30,12 +30,12 @@ function MenuApp({isInline}) {
                         key: "main",
                     },
                     {
-                        label: "Movies",
-                        key: "movies",
-                    },
-                    {
                         label: "Rent Movies",
                         key: "rent_movies",
+                    },
+                    {
+                        label: "VIP Movies",
+                        key: "vipmovies",
                     },
                     {
                         label: "Promotions",

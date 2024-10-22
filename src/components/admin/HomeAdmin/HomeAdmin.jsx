@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Layout, Menu, Breadcrumb, Radio, Dropdown, Image, Button } from 'antd';
-import { BrowserRouter, Route, Routes, Link, useNavigate } from 'react-router-dom';
+import { Route, Routes, Link, useNavigate } from 'react-router-dom';
 import {
   PieChartOutlined,
   UserOutlined,
@@ -27,6 +27,7 @@ import Plans from '../Vip/Plans';
 import Packages from '../Vip/Packages';
 import Profile from '../Profile/Profile';
 import Features from '../Vip/Features';
+import "../../../styles/Admin.css";
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;

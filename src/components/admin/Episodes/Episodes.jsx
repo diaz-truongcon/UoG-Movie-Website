@@ -1,29 +1,24 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { Table, Button, Modal, Form, Input, Col, Space, Row, message, Select } from 'antd';
 import { PlusOutlined, SearchOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { fetchDocuments, addDocument, updateDocument, deleteDocument } from "../../../Service/FirebaseService";
+import { addDocument, updateDocument, deleteDocument } from "../../../Service/FirebaseService";
 import { ContextMovies } from '../../../context/MoviesContext';
+import { ContextFavorites } from '../../../context/FavoritesProvider';
 import { YOUR_SERVICE_ID, YOUR_TEMPLATE_ID, YOUR_USER_ID } from "../../../utils/Contants";
-import emailjs from 'emailjs-com';  // Thêm emailjs
-
+import { ContextEpisodes } from "../../../context/ContextEpisodes";
+import emailjs from 'emailjs-com';
 const { Column } = Table;
 const { Option } = Select;
 
 function Episodes() {
     const [form] = Form.useForm();
-    const [episodes, setEpisodes] = useState([]);
+    const episodes = useContext(ContextEpisodes);
     const [update, setUpdate] = useState(false);
     const [visible, setVisible] = useState(false);
     const [episodeEdit, setEpisodeEdit] = useState(null);
     const movies = useContext(ContextMovies);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const episodesData = await fetchDocuments('Episodes');
-            setEpisodes(episodesData);
-        };
-        fetchData();
-    }, [update]);
+    const favorites = useContext(ContextFavorites);
+    const [searchTerm, setSearchTerm] = useState('');  // New state to store the search term
 
     const showModal = () => {
         setVisible(true);
@@ -44,7 +39,7 @@ function Episodes() {
             } else {
                 await addDocument('Episodes', values);
                 message.success('Episode added successfully!');
-                sendEmail(values);  // Gửi email sau khi thêm tập phim
+                sendEmail(values);  // Send email after adding a new episode
             }
             setUpdate(!update);
             handleCancel();
@@ -55,20 +50,35 @@ function Episodes() {
 
     const sendEmail = (episodeData) => {
         const movie = movies.find(movie => movie.id === episodeData.movieId);
-    
-        const templateParams = {
-            movie_name: movie ? movie.nameMovie : '',
-            episode_number: episodeData.episodeNumber,
-            url_movie: episodeData.URLmovie,
-            to_email: 'tranthanhtiqn@gmail.com',  // Địa chỉ email nhận
-        };
-    
-        emailjs.send(YOUR_SERVICE_ID, YOUR_TEMPLATE_ID, templateParams, YOUR_USER_ID)
-            .then((response) => {
-                message.success('Email sent successfully!');
-            }, (error) => {
-                message.error('Failed to send email. Please try again.');
-            });
+
+        if (!movie) {
+            message.error("Movie not found!");
+            return;
+        }
+
+        const favoritesByUser = favorites.filter(fav => fav.movieId === movie.id);
+
+        if (favoritesByUser.length === 0) {
+            message.info('No users have favorited this movie.');
+            return;
+        }
+
+        favoritesByUser.forEach(fav => {
+            const templateParams = {
+                movie_name: movie.nameMovie,
+                episode_number: episodeData.episodeNumber,
+                url_movie: episodeData.URLmovie,
+                to_email: fav.userId,  // User email
+            };
+            emailjs.send(YOUR_SERVICE_ID, YOUR_TEMPLATE_ID, templateParams, YOUR_USER_ID)
+                .then((response) => {
+                    console.log(`Email sent successfully to ${fav.userId}!`);
+                }, (error) => {
+                    console.error(`Failed to send email to ${fav.userId}:`, error);
+                });
+        });
+
+        message.success('Emails are being sent to all users who favorited this movie.');
     };
 
     const handleEdit = (record) => {
@@ -100,6 +110,12 @@ function Episodes() {
         });
     };
 
+    // Filter episodes based on the search term
+    const filteredEpisodes = episodes.filter((episode) => {
+        const movie = movies.find(movie => movie.id === episode.movieId);
+        return movie && movie.nameMovie.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+
     return (
         <>
             <Row gutter={16} align="middle">
@@ -111,6 +127,7 @@ function Episodes() {
                         placeholder="Search episodes"
                         style={{ width: '100%' }}
                         prefix={<SearchOutlined />}
+                        onChange={(e) => setSearchTerm(e.target.value)}  // Update search term
                     />
                 </Col>
                 <Col xs={24} md={6} xl={6} style={{ marginTop: "1em" }}>
@@ -119,7 +136,7 @@ function Episodes() {
                     </Button>
                 </Col>
             </Row>
-            <Table dataSource={episodes} pagination={{ pageSize: 5 }} style={{ marginTop: "1rem" }} className="responsive-table">
+            <Table dataSource={filteredEpisodes} pagination={{ pageSize: 5 }} style={{ marginTop: "1rem" }} className="responsive-table">
                 <Column title="#" render={(text, record, index) => index + 1} key="index" />
                 <Column
                     title="Movie Name"

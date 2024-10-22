@@ -29,7 +29,6 @@ export const CustomerLoginProvider = ({ children }) => {
       if (loggedInStatus) {
         const parsedLogin = JSON.parse(loggedInStatus);
         const customer = customers.find(cust => cust.id === parsedLogin.id);
-        console.log(customer);
         
         if (customer) {
           setIsLoggedIn(customer); // Cập nhật trạng thái đăng nhập
@@ -40,7 +39,6 @@ export const CustomerLoginProvider = ({ children }) => {
       }
     }
   }, [customers]); // Lắng nghe sự thay đổi của customers
-console.log(customers);
 
   return (
     <CustomerLoginContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>

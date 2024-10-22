@@ -1,20 +1,13 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useContext } from 'react';
 import { Button, Tooltip, message } from 'antd';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
-import { addDocument, deleteDocument, fetchDocuments } from '../../../Service/FirebaseService';
+import { addDocument, deleteDocument } from '../../../Service/FirebaseService';
 import { CustomerLoginContext } from '../../../context/CustomerLoginContext';
+import { ContextFavorites } from '../../../context/FavoritesProvider';
 function IconFavorites({ element }) {
     const { isLoggedIn } = useContext(CustomerLoginContext);
-    const [favorites, setFavorites] = useState([]);
-    const [update, setUpdate] = useState(false);
-    // Kiểm tra trạng thái yêu thích ban đầu
-    useEffect(() => {
-        const fetchData = async () => {
-            const favoritesData = await fetchDocuments('Favorites');
-            setFavorites(favoritesData.filter(a => a.userId == isLoggedIn.id));
-        };
-        fetchData();
-    }, [isLoggedIn, update]);
+    const favorites = useContext(ContextFavorites);
+
     // Xử lý thêm/bỏ yêu thích
     const handleFavoriteClick = async (movie) => {
         if (!isLoggedIn) {
@@ -33,7 +26,6 @@ function IconFavorites({ element }) {
             await addDocument("Favorites", favorite); // Thêm vào danh sách yêu thích
             message.success('Đã thêm vào danh sách yêu thích');
         }
-        setUpdate(!update); // Cập nhật lại trạng thái yêu thích
     };
 
     const checkFavorites = (id) => {
@@ -48,8 +40,7 @@ function IconFavorites({ element }) {
                 icon={checkFavorites(element?.id) ? <MinusOutlined /> : <PlusOutlined />}
                 onClick={() => handleFavoriteClick(element)}
                 style={{ color: 'white' }}
-            >
-                {/* {checkFavorites(element?.id) ? "Xóa khỏi danh sách yêu thích" : "Thêm vào danh sách yêu thích"} */}
+            >            
             </Button>
         </Tooltip>
 

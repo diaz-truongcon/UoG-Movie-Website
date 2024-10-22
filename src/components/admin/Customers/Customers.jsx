@@ -15,6 +15,7 @@ function Customers() {
     const [previewImg, setPreviewImg] = useState(null);
     const [imgUpload, setImgUpload] = useState(null);
     const [update, setUpdate] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
     const [visiblePasswordId, setVisiblePasswordId] = useState(null);
     const { isLoggedIn } = useContext(CustomerLoginContext);
     const customers = useContext(ContextCustomers);
@@ -34,7 +35,7 @@ function Customers() {
         try {
             const values = await form.validateFields();
             if (customerEdit) {
-                await updateDocument('Customers', customerEdit.id, values, imgUpload, customerEdit.avatar);
+                await updateDocument('Customers', customerEdit.id, values, imgUpload);
                 message.success('Customer updated successfully!');
             } else {
                 await addDocument('Customers', values, imgUpload);
@@ -88,7 +89,11 @@ function Customers() {
     const togglePasswordVisibility = (id) => {
         setVisiblePasswordId((prevId) => (prevId === id ? null : id));
     };
-
+    // Filter customers based on search term
+    const filteredCustomers = customers.filter(customer =>
+        customer.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        customer.id.toLowerCase().includes(searchTerm.toLowerCase())
+    );
     return (
         <>
             {isLoggedIn.role === 'admin' ? (
@@ -101,6 +106,7 @@ function Customers() {
                             <Input.Search
                                 placeholder="Search customers"
                                 style={{ width: '100%' }}
+                                onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </Col>
                         <Col xs={24} md={6} xl={6} style={{ marginTop: "1em" }}>
@@ -111,7 +117,7 @@ function Customers() {
                             )}
                         </Col>
                     </Row>
-                    <Table dataSource={customers} pagination={{ pageSize: 5 }} style={{ marginTop: "1rem" }}>
+                    <Table dataSource={filteredCustomers} pagination={{ pageSize: 5 }} style={{ marginTop: "1rem" }}>
                         <Column title="#" render={(text, record, index) => index + 1} key="index" />
                         <Column
                             title="Avatar"
@@ -120,7 +126,7 @@ function Customers() {
                                 <Image width={50} src={record.imgUrl} />
                             )}
                         />
-                        <Column title="Name" dataIndex="nameCustomer" key="nameCustomer" />
+                        <Column title="Username" dataIndex="username" key="username" />
                         <Column title="Email" dataIndex="id" key="id" />
                         <Column title="Role" dataIndex="role" key="role" />
                         <Column
@@ -128,15 +134,21 @@ function Customers() {
                             key="password"
                             render={(text, record) => (
                                 <Space size="middle">
-                                    <Input.Password
-                                        value={record.password}
-                                        visibilityToggle={{
-                                            visible: visiblePasswordId === record.id, 
-                                            onVisibleChange: () => togglePasswordVisibility(record.id),
-                                        }}
-                                        iconRender={(visible) => (visible ? <EyeOutlined /> : <EyeInvisibleOutlined />)}
-                                        style={{ width: '150px' }}
-                                    />
+                                    {record.password ? (
+                                        <Input.Password
+                                            value={record.password}
+                                            visibilityToggle={{
+                                                visible: visiblePasswordId === record.id,
+                                                onVisibleChange: () => togglePasswordVisibility(record.id),
+                                            }}
+                                            iconRender={(visible) =>
+                                                visible ? <EyeOutlined /> : <EyeInvisibleOutlined />
+                                            }
+                                            style={{ width: '150px' }}
+                                        />
+                                    ) : (
+                                        <span className='text-google'>Sign in with Google</span>
+                                    )}
                                 </Space>
                             )}
                         />
@@ -159,9 +171,9 @@ function Customers() {
                     >
                         <Form form={form} layout="vertical">
                             <Form.Item
-                                label="Name"
-                                name="nameCustomer"
-                                rules={[{ required: true, message: 'Please enter the customer name!' }]}
+                                label="Username"
+                                name="username"
+                                rules={[{ required: true, message: 'Please enter the customer username!' }]}
                             >
                                 <Input />
                             </Form.Item>
@@ -172,13 +184,15 @@ function Customers() {
                             >
                                 <Input disabled={!!customerEdit} />
                             </Form.Item>
-                            <Form.Item
-                                label="Password"
-                                name="password"
-                                rules={[{ required: true, message: 'Please enter a password!' }]}
-                            >
-                                <Input.Password />
-                            </Form.Item>
+                            {(!customerEdit || customerEdit.password) && ( // Show password field if adding or if password exists
+                                <Form.Item
+                                    label="Password"
+                                    name="password"
+                                    rules={[{ required: true, message: 'Please enter a password!' }]}
+                                >
+                                    <Input.Password />
+                                </Form.Item>
+                            )}
                             <Form.Item
                                 label="Role"
                                 name="role"

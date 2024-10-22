@@ -10,9 +10,12 @@ import { BrowserRouter } from 'react-router-dom';
 import { PlansProvider } from './context/PlansContext'; // Import PlansProvider
 import { FeaturesProvider } from './context/ContextFeatures';
 import { CommentsProvider } from './context/CommentsProvider'; // Import CommentsProvider
+import { FavoritesProvider } from './context/FavoritesProvider';
+import { WatchHistoryProvider } from './context/WatchHistoryProvider';
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
+    <WatchHistoryProvider>
       <CustomersProvider>
         <MoviesProvider>
           <CategoriesProvider>
@@ -21,7 +24,9 @@ ReactDOM.render(
                 <FeaturesProvider>
                   <CommentsProvider>
                     <CustomerLoginProvider>
-                      <App />
+                      <FavoritesProvider>
+                        <App />
+                      </FavoritesProvider>
                     </CustomerLoginProvider>
                   </CommentsProvider>
                 </FeaturesProvider>
@@ -30,7 +35,7 @@ ReactDOM.render(
           </CategoriesProvider>
         </MoviesProvider>
       </CustomersProvider>
-
+     </WatchHistoryProvider>
     </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')

@@ -1,32 +1,17 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Col, Image, Button, Tooltip, message } from 'antd';
-import { PlayCircleOutlined, HeartOutlined, PlusOutlined, MinusOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import React, { useState, useContext } from 'react';
+import { Col, Image, Button, Tooltip } from 'antd';
+import { PlayCircleOutlined} from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { addDocument, deleteDocument, fetchDocuments, updateDocument, checkVipEligibility } from '../../../Service/FirebaseService';
+import { handleClick } from '../../../utils/ContantsFunctions';
 import { CustomerLoginContext } from '../../../context/CustomerLoginContext';
 import { ContextPlans } from '../../../context/PlansContext';
 import IconLikes from './IconLikes';
 import IconFavorites from './IconFavorites';
-function CardItem({ element, index, setIsPaused }) {
+function CardItem({ element, index, setIsPaused = () => {}  }) {
     const { isLoggedIn } = useContext(CustomerLoginContext);
     const plans = useContext(ContextPlans);
     const navigate = useNavigate(); // Sử dụng useNavigate để điều hướng
     const [hoveredIndex, setHoveredIndex] = useState(null);
-
-    const handleClick = async (movie) => {
-        if (!isLoggedIn) {
-            message.warning('Bạn cần đăng nhập để xem phim');
-            return;
-        }
-        
-        const status = await checkVipEligibility(isLoggedIn.id, plans, movie);
-
-        if (status) {
-            navigate(`/moviedetail/${movie.id}`);
-        } else {
-            navigate(`/subscriptionplan`);
-        }
-    };
 
     // Xử lý hover vào từng phim
     const handleColHover = (index) => {
@@ -74,7 +59,7 @@ function CardItem({ element, index, setIsPaused }) {
                             type="link"
                             icon={<PlayCircleOutlined />}
                             style={{ color: 'white' }}
-                            onClick={() => handleClick(element)}
+                            onClick={() => handleClick(element,isLoggedIn,plans,navigate)}
                         />
                     </Tooltip>
                  <IconFavorites element={element} />

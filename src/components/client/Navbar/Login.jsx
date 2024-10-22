@@ -1,239 +1,165 @@
 import React, { useContext, useState } from 'react';
-import { Button, Modal, Typography, Divider, message, Input, Form } from "antd";
-import { GoogleOutlined, UserOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
+import { Button, Modal, Typography, Divider, message, Form } from "antd";
+import { GoogleOutlined } from "@ant-design/icons";
 import { ContextCustomers } from "../../../context/CustomersContext";
 import { signInWithPopup } from "firebase/auth";
 import { googleProvider, auth } from "../../../config/firebase";
 import { CustomerLoginContext } from '../../../context/CustomerLoginContext';
 import { addDocumentById } from "../../../Service/FirebaseService";
 import { ROLES } from "../../../utils/Contants";
+import SignupItem from './SignupItem';
+import LoginItem from './LoginItem';
+import ForgotPassword from './ForgotPassword';
 
 const Login = ({ handleCancel, isModalVisible }) => {
-    const customers = useContext(ContextCustomers); // Lấy dữ liệu khách hàng từ Context
-    const { setIsLoggedIn } = useContext(CustomerLoginContext); // Cập nhật trạng thái đăng nhập
+    const customers = useContext(ContextCustomers);
+    const { setIsLoggedIn } = useContext(CustomerLoginContext);
     const [isSignUp, setIsSignUp] = useState(false);
+    const [isForgot, setIsForgot] = useState(false);
     const [form] = Form.useForm();
 
-    // Handle login using email and password
+    // Handle login using username/email and password
     const handleLogin = (values) => {
-        const { email, password } = values;
-        const existingCustomer = customers.find(customer => customer.id === email && customer.password === password);
-        if(!existingCustomer) {
-           message.error('Email hoặc mật khẩu không đúng!');
-           return;
+        const { emailOrUsername, password } = values;
+        const existingCustomer = customers.find(customer =>
+            (customer.id === emailOrUsername || customer.username === emailOrUsername) && customer.password === password
+        );
+        if (!existingCustomer) {
+            message.error('Tên người dùng hoặc email hoặc mật khẩu không đúng!');
+            return;
         }
         setIsLoggedIn(existingCustomer);
         message.success('Đăng nhập thành công!');
         handleCancel();
     };
 
-    // Handle sign-up using email and password
+    // Handle sign-up using username, email, and password
     const handleSignUp = async (values) => {
-        const { email, password, confirmPassword } = values;
-        // Validate if passwords match
+        const { username, email, password, confirmPassword } = values;
         if (password !== confirmPassword) {
             message.error('Mật khẩu không trùng khớp!');
             return;
         }
-       // Kiểm tra khách hàng đã tồn tại dựa trên email
-       const existingCustomer = customers.find(customer => customer.id === email);
-       if(existingCustomer) {
-            message.error('Email đã tồn tại. Vui lòng đăng nhập hoặc đăng ký với email khác.');
+        const existingCustomer = customers.find(customer => customer.id === email || customer.username === username);
+        if (existingCustomer) {
+            message.error('Email hoặc tên người dùng đã tồn tại.');
             return;
-       }
-        // Tạo mới khách hàng
+        }
+
         const newCustomer = {
+            username,
             imgUrl: "https://ss-images.saostar.vn/wp700/pc/1613810558698/Facebook-Avatar_3.png",
-            role: ROLES.USER, 
-            password: password
+            role: ROLES.USER,
+            password,
         };
 
-        // Thêm khách hàng mới vào Firestore với email làm id
         await addDocumentById('Customers', email, newCustomer);
-        newCustomer.id = email; // Gán email vào id của khách hàng mới
-        // Cập nhật trạng thái đăng nhập
+        newCustomer.id = email;
         setIsLoggedIn(newCustomer);
-        // Xoá thông tin đăng nhập và mật khẩu
         form.resetFields();
-        // On success
         message.success('Đăng ký thành công!');
         handleCancel();
     };
 
-    // Đăng nhập với Google
+    // Google sign-in
     const signInWithGoogle = async () => {
         try {
-            // Thực hiện đăng nhập với Google
             const result = await signInWithPopup(auth, googleProvider);
             const user = result.user;
-
-            // Kiểm tra khách hàng đã tồn tại dựa trên email
             const existingCustomer = customers.find(customer => customer.id === user.email);
             let loggedInCustomer;
 
-            // Nếu khách hàng chưa tồn tại, tạo mới trong cơ sở dữ liệu với email làm id
             if (!existingCustomer) {
                 const newCustomer = {
-                    nameCustomer: user.displayName,
+                    username: user.displayName,
                     imgUrl: user.photoURL,
-                    role: ROLES.USER, // Gán vai trò mặc định là USER
+                    role: ROLES.USER,
                 };
-                // Thêm khách hàng mới vào Firestore với email làm id
                 await addDocumentById('Customers', user.email, newCustomer);
                 newCustomer.id = user.email;
-                loggedInCustomer = newCustomer; // Gán khách hàng mới vào biến
+                loggedInCustomer = newCustomer;
             } else {
-                loggedInCustomer = existingCustomer; // Nếu đã tồn tại, gán dữ liệu cũ
+                loggedInCustomer = existingCustomer;
             }
-
-            // Cập nhật trạng thái đăng nhập
             setIsLoggedIn(loggedInCustomer);
-            handleCancel(); // Đóng modal
             message.success('Đăng nhập thành công!');
+            handleCancel();
         } catch (error) {
             message.error('Đăng nhập thất bại. Vui lòng thử lại.');
         }
     };
 
     return (
-        <Modal
-        title={isSignUp ? "Sign Up" : "Login"}
-        visible={isModalVisible}
-        footer={null}
-        onCancel={handleCancel}
-        centered
-        style={{ textAlign: 'center' }}
-    >
-        <Form
-            form={form}
-            layout="vertical"
-            onFinish={isSignUp ? handleSignUp : handleLogin}
-        >
-            {/* Email Input */}
-            <Form.Item
-                name="email"
-                rules={[{ required: true, message: 'Please enter your email!' }]}
+        <>
+            <Modal
+                title={isForgot ? "Forgot Password" : (isSignUp ? "Sign Up" : "Login")}
+                visible={isModalVisible}
+                footer={null}
+                onCancel={handleCancel}
+                centered
+                style={{ textAlign: 'center' }}
             >
-                <Input
-                    placeholder="e.g. example@mail.com"
-                    prefix={<UserOutlined />}
-                    style={{
-                        marginBottom: "10px",
-                        padding: "10px",
-                        borderRadius: "45px",
-                        border: "1px solid gray",
-                        fontSize: "16px",
-                        backgroundColor: "#f0f0f0"
-                    }}
-                />
-            </Form.Item>
-
-            {/* Password Input */}
-            <Form.Item
-                name="password"
-                rules={[{ required: true, message: 'Please enter your password!' }]}
-            >
-                <Input.Password
-                    placeholder="e.g. Example2006"
-                    style={{
-                        marginBottom: "10px",
-                        padding: "10px",
-                        borderRadius: "45px",
-                        border: "1px solid gray",
-                        fontSize: "16px",
-                        backgroundColor: "#f0f0f0"
-                    }}
-                    iconRender={visible => (visible ? <EyeInvisibleOutlined /> : <EyeInvisibleOutlined />)}
-                />
-            </Form.Item>
-
-            {/* Confirm Password Input - Only for Sign Up */}
-            {isSignUp && (
-                <Form.Item
-                    name="confirmPassword"
-                    dependencies={['password']}
-                    rules={[
-                        { required: true, message: 'Please confirm your password!' },
-                        ({ getFieldValue }) => ({
-                            validator(_, value) {
-                                if (!value || getFieldValue('password') === value) {
-                                    return Promise.resolve();
-                                }
-                                return Promise.reject(new Error('Mật khẩu không trùng khớp!'));
-                            },
-                        }),
-                    ]}
-                >
-                    <Input.Password
-                        placeholder="Re-enter your password"
+            {
+                isForgot ?  <ForgotPassword setIsForgot={setIsForgot} /> : (
+                    <>
+                        <Form form={form} layout="vertical" onFinish={isSignUp ? handleSignUp : handleLogin}>
+                    {isSignUp ? <SignupItem /> : <LoginItem />}
+                    {!isSignUp && (
+                        <a onClick={() => setIsForgot(true)} href="#" style={{ alignSelf: "flex-end", marginBottom: "10px", color: "#aaa" }}>
+                            Forgot password?
+                        </a>
+                    )}
+                    <Button
+                        htmlType="submit"
                         style={{
-                            marginBottom: "10px",
-                            padding: "10px",
+                            backgroundColor: "#333",
+                            color: "white",
                             borderRadius: "45px",
-                            border: "1px solid gray",
+                            padding: "10px",
                             fontSize: "16px",
-                            backgroundColor: "#f0f0f0"
+                            marginBottom: "10px"
                         }}
-                        iconRender={visible => (visible ? <EyeInvisibleOutlined /> : <EyeInvisibleOutlined />)}
-                    />
-                </Form.Item>
-            )}
+                    >
+                        {isSignUp ? "Sign Up" : "Login"}
+                    </Button>
+                </Form>
 
-            {/* Forgot password link */}
-            {!isSignUp && (
-                <a href="#" style={{ alignSelf: "flex-end", marginBottom: "10px", color: "#aaa" }}>
-                    Forgot password?
-                </a>
-            )}
+                <Typography.Paragraph>
+                    {isSignUp ? (
+                        <>Already have an account? <a onClick={() => setIsSignUp(false)}>Login</a></>
+                    ) : (
+                        <>Don’t have an account? <a onClick={() => setIsSignUp(true)}>Sign up</a></>
+                    )}
+                </Typography.Paragraph>
 
-            {/* Submit Button */}
-            <Button
-                htmlType="submit"
-                style={{
-                    backgroundColor: "#333",
-                    color: "white",
-                    borderRadius: "45px",
-                    padding: "10px",
-                    fontSize: "16px",
-                    marginBottom: "10px"
-                }}
-            >
-                {isSignUp ? "Sign Up" : "Login"}
-            </Button>
-        </Form>
+                <Divider>Or</Divider>
 
-        {/* Toggle between login and sign-up */}
-        <Typography.Paragraph>
-            {isSignUp ? (
-                <>Already have an account? <a onClick={() => setIsSignUp(false)}>Login</a></>
-            ) : (
-                <>Don’t have an account? <a onClick={() => setIsSignUp(true)}>Sign up</a></>
-            )}
-        </Typography.Paragraph>
+                <Button
+                    onClick={signInWithGoogle}
+                    icon={<GoogleOutlined />}
+                    style={{
+                        background: "linear-gradient(to right,red, yellow, green)",
+                        color: "white",
+                        fontWeight: "bold",
+                        borderRadius: "45px",
+                        padding: "10px",
+                        fontSize: "16px"
+                    }}
+                >
+                    Continue with Google
+                </Button>
+                <Typography.Paragraph style={{ color: "#aaa", fontSize: "14px", marginTop: "10px" }}>
+                    By signing up, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+                </Typography.Paragraph>
 
-        <Divider>Or</Divider>
-
-        {/* Google Login Button */}
-        <Button
-            onClick={signInWithGoogle}
-            icon={<GoogleOutlined />}
-            style={{
-                background: "white",
-                border: "1px solid gray",
-                borderRadius: "45px",
-                color: "black",
-                fontWeight: "bold",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "10px",
-                padding: "10px",
-                width: "100%"
-            }}
-        >
-            Sign in with Google
-        </Button>
-    </Modal>
+                <Typography.Paragraph style={{ color: "#aaa", fontSize: "14px", marginTop: "5px" }}>
+                    Need help? Contact <a href="#">Support</a>.
+                </Typography.Paragraph>
+                    </>
+                )
+            }
+            </Modal>     
+        </>
     );
 };
 
