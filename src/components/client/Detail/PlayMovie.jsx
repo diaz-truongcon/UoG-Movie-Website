@@ -69,7 +69,7 @@ function PlayMovie(props) {
     }
     function getCustomerImg(id) {
         const customer = customers.find((item) => item.id === id);
-        return customer ? customer.img : "";
+        return customer ? customer.imgUrl : "";
     }
     const formatCommentTime = (commentDate) => {
         const now = new Date();
@@ -115,7 +115,7 @@ const  getEpisode = (episode) => {
     handleWatchHistory(episode);
 }
     return (
-        <div>
+        <div style={{ marginTop: "70px"}}>
             {/* Movie player */}
             <iframe
                 width="100%"
@@ -163,16 +163,19 @@ const  getEpisode = (episode) => {
                             .sort((a, b) => b.createdAt.toDate() - a.createdAt.toDate()) // Sắp xếp theo thời gian mới nhất
                             .map((comment, index) => (
                                 <Row gutter={[16, 16]} style={{ marginTop: '20px' }} key={index}>
-                                    <Col xs={4} lg={4}>
+                                    <Col xs={4} lg={4} style={{ display: 'flex',flexDirection:"column", gap:"5px" }}>
                                         <Image
                                             src={getCustomerImg(comment.idCustomer)}
                                             preview={false}
-                                            style={{ borderRadius: '50%', width: '60%' }}
+                                            style={{ borderRadius: '50%', width: '60px', height: '60px' }}
                                         />
+                                        <Title style={{ color: "white", fontSize:"0.6rem"}}>
+                                               Xuân Trường
+                                            </Title>
                                     </Col>
                                     <Col xs={20} lg={20} style={{ background: 'white', padding: '10px', borderRadius: '8px' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                                            <Title level={4} style={{ margin: 0 }}>
+                                        <div style={{ display: 'flex', alignItems: 'center',justifyContent: 'space-between' }}>
+                                            <Title level={4} style={{  }}>
                                                 {getCustomerName(comment.idCustomer)}
                                             </Title>
                                             <Text type="secondary" style={{ marginLeft: '10px' }}>

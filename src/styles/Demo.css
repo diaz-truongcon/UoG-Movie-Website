@@ -2,7 +2,6 @@
   position: relative;
   overflow:hidden;
   height: 100vh;
-}
   .container {
     position: absolute;
     top: 50%;
@@ -102,21 +101,6 @@
     opacity: 0;
     animation: animate 1s ease-in-out 0.6s 1 forwards;
   }
-  
-  @keyframes animate {
-    from {
-      opacity: 0;
-      transform: translate(0, 100px);
-      filter: blur(33px);
-    }
-  
-    to {
-      opacity: 1;
-      transform: translate(0);
-      filter: blur(0);
-    }
-  }
-  
   .button {
     width: 100%;
     text-align: center;
@@ -138,5 +122,22 @@
   .button button:hover {
     background: #ababab;
     color: #fff;
+  }
+  
+}
+ 
+  
+  @keyframes animate {
+    from {
+      opacity: 0;
+      transform: translate(0, 100px);
+      filter: blur(33px);
+    }
+  
+    to {
+      opacity: 1;
+      transform: translate(0);
+      filter: blur(0);
+    }
   }
   

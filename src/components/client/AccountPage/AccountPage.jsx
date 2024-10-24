@@ -1,23 +1,41 @@
-import React, { useContext, useState } from 'react';
-import { Layout, Menu, Form, Input, Button, Radio, Avatar, message, Col, Row } from 'antd';
+import React, { useContext, useEffect, useState } from 'react';
+import { Layout, Menu, Form, Input, Button, Radio, Avatar, message, Col, Row, Upload } from 'antd';
 import { UserOutlined, GiftOutlined, LogoutOutlined, AppleOutlined, FacebookOutlined, GoogleOutlined, PicRightOutlined, BulbOutlined } from '@ant-design/icons';
 import { CustomerLoginContext } from '../../../context/CustomerLoginContext';
 import EditProfile from './EditProfile';
 
-const { Header, Content, Sider } = Layout;
-
 const AccountPage = () => {
     const { isLoggedIn, setIsLoggedIn } = useContext(CustomerLoginContext);
-
-
+    const [previewImg, setPreviewImg] = useState(null);
+    const [imgUpload, setImgUpload] = useState(null);
+    useEffect(() => {
+        setPreviewImg(isLoggedIn.imgUrl);
+    },[isLoggedIn])
+    // Image upload handling
+    const uploadProps = {
+        beforeUpload: (file) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                setPreviewImg(reader.result); // Preview image before upload
+            };
+            setImgUpload(file);
+            return false;
+        },
+    };
     return (
         <Row style={{ backgroundColor: '#fff', paddingTop: "50px" }} >
             <Col xs={24} md={8} xl={6}>
                 <Avatar
                     size={64}
-                    src={isLoggedIn.imgUrl}
-                    style={{ margin: '20px auto', display: 'block' }}
+                    src={previewImg}
+                    style={{ margin: '10px auto', display: 'block' }}
                 />
+                <p style={{ textAlign: 'center',marginBottom:"10px" }}>
+                    <Upload {...uploadProps} showUploadList={false} style={{ textAlign: 'center' }}>
+                        <Button>Chọn ảnh đại diện</Button>
+                    </Upload>
+                </p>
                 <p style={{ textAlign: 'center' }}>0378486992</p>
                 <p style={{ textAlign: 'center' }}>Bạn chưa có gói Galaxy Play</p>
                 <p style={{ textAlign: 'center', padding: "20px" }}>
@@ -45,7 +63,7 @@ const AccountPage = () => {
                     </Menu.Item>
                 </Menu>
             </Col>
-             <EditProfile isLoggedIn={isLoggedIn} />
+            <EditProfile isLoggedIn={isLoggedIn} imgUpload={imgUpload}  />
         </Row>
     );
 };

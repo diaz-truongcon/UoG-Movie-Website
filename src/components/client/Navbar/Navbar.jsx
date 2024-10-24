@@ -6,6 +6,7 @@ import Login from './Login';
 import MenuApp from './MenuApp';
 import { CustomerLoginContext } from '../../../context/CustomerLoginContext';
 import { Link, useNavigate } from 'react-router-dom';
+import logo from "../../../assets/logo.png"
 const Navbar = () => {
   const [openMenu, setOpenMenu] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -41,7 +42,7 @@ const Navbar = () => {
                 Quản lý kho phim
             </Menu.Item>
       <Menu.Item key="2" onClick={() => navigate('/accountpage')}><UserOutlined style={{ paddingRight: "1rem" }} />Tài khoản</Menu.Item>
-      <Menu.Item onClick={() => setIsLoggedIn(false)} key="3"><LoginOutlined style={{ paddingRight: "1rem" }} /> Đăng xuất</Menu.Item>
+      <Menu.Item onClick={() => {setIsLoggedIn(false); navigate("/")}} key="3"><LoginOutlined style={{ paddingRight: "1rem" }} /> Đăng xuất</Menu.Item>
     </Menu>
   );
 
@@ -57,8 +58,8 @@ const Navbar = () => {
         </div>
         <div>
           <Image
-            width={80}
-            src="https://assets.glxplay.io/web/images/logoglx.svg"
+            width={55}
+            src={logo}
             alt="Description of the image"
           />
         </div>

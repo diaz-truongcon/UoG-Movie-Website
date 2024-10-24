@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import HomeAdmin from './components/admin/HomeAdmin/HomeAdmin';
 import "./App.css";
 import Home from './components/client/Home/Home';
-import { ConfigProvider } from 'antd';
+import { ConfigProvider, message } from 'antd';
 import { ligthTheme, darkTheme } from './components/theme/Theme';
 import { CustomerLoginContext } from './context/CustomerLoginContext';
 

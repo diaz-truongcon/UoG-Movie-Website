@@ -28,7 +28,7 @@ import Packages from '../Vip/Packages';
 import Profile from '../Profile/Profile';
 import Features from '../Vip/Features';
 import "../../../styles/Admin.css";
-
+import logo from "../../../assets/logo.png"
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 
@@ -106,7 +106,7 @@ const HomeAdmin = ({ currentTheme, setCurrentTheme }) => {
     <Layout style={{ minHeight: '100vh' }}>
       <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
         <div className="logo" style={{ height: '50px' }}>
-          <img src="https://assets.glxplay.io/web/images/logoglx.svg" alt="" style={{ height: '50px' }} />
+          <img src={logo} alt="" style={{ height: '50px' }} />
         </div>
         <Menu theme="dark" selectedKeys={[selectedKey]} mode="inline">
           {menuItems.map(item => (
@@ -144,8 +144,8 @@ const HomeAdmin = ({ currentTheme, setCurrentTheme }) => {
         </Header>
         <Content style={{ margin: '0 16px' }}>
           <Breadcrumb style={{ margin: '16px 0' }}>
-            <Breadcrumb.Item>User</Breadcrumb.Item>
-            <Breadcrumb.Item>Bill</Breadcrumb.Item>
+            {/* <Breadcrumb.Item>User</Breadcrumb.Item>
+            <Breadcrumb.Item>Bill</Breadcrumb.Item> */}
           </Breadcrumb>
           <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
             <Routes>

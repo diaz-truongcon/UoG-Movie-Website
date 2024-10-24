@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Menu } from "antd";
 function MenuApp({isInline}) {
     const navigate = useNavigate();
+    
     const handleMenuClick = (key) => {
        if (key === "home") {
         navigate("/");
@@ -10,8 +11,14 @@ function MenuApp({isInline}) {
        if (key === "main") {
         navigate("/main");
        }
-       if (key === "promotions") {
+       if (key === "contacts") {
         navigate("/faq");
+       }
+       if (key === "rent_movies") {
+        navigate("/rent_movies");
+       }
+       if (key === "promotions") {
+        navigate("/promotions");
        }
     };   
     return (
@@ -37,9 +44,14 @@ function MenuApp({isInline}) {
                         label: "VIP Movies",
                         key: "vipmovies",
                     },
+                    ,
                     {
                         label: "Promotions",
                         key: "promotions",
+                    },
+                    {
+                        label: "Contacts",
+                        key: "contacts",
                     }
                 ]}
             />

@@ -13,8 +13,10 @@ import Search from '../Search/Search';
 import AccountPage from '../AccountPage/AccountPage';
 import FAQ from '../Support/FAQ';
 import "../../../styles/Client.css";
+import RentMovies from '../Main/RentMovies';
+import Promotions from '../Support/Promotions';
 function Home() {
-
+       
   return (
       <div style={{ backgroundColor: "#111111" }}>
         <Navbar></Navbar>
@@ -28,7 +30,9 @@ function Home() {
           <Route path="/paymentpage/:id" element={<PaymentPage/>} />
           <Route path="/search" element={<Search/>} />
           <Route path="/accountpage" element={<AccountPage/>} />
+          <Route path="/rent_movies" element={<RentMovies/>} />
           <Route path="/faq" element={<FAQ/>} />
+          <Route path="/promotions" element={<Promotions/>} />
         </Routes>
         <Footer></Footer>
       </div>

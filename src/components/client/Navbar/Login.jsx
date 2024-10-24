@@ -10,6 +10,7 @@ import { ROLES } from "../../../utils/Contants";
 import SignupItem from './SignupItem';
 import LoginItem from './LoginItem';
 import ForgotPassword from './ForgotPassword';
+import { useNavigate } from "react-router-dom";
 
 const Login = ({ handleCancel, isModalVisible }) => {
     const customers = useContext(ContextCustomers);
@@ -17,6 +18,7 @@ const Login = ({ handleCancel, isModalVisible }) => {
     const [isSignUp, setIsSignUp] = useState(false);
     const [isForgot, setIsForgot] = useState(false);
     const [form] = Form.useForm();
+    const navigate = useNavigate();
 
     // Handle login using username/email and password
     const handleLogin = (values) => {
@@ -31,6 +33,7 @@ const Login = ({ handleCancel, isModalVisible }) => {
         setIsLoggedIn(existingCustomer);
         message.success('Đăng nhập thành công!');
         handleCancel();
+        navigate("/");
     };
 
     // Handle sign-up using username, email, and password
@@ -59,6 +62,7 @@ const Login = ({ handleCancel, isModalVisible }) => {
         form.resetFields();
         message.success('Đăng ký thành công!');
         handleCancel();
+        navigate("/");
     };
 
     // Google sign-in
@@ -84,6 +88,7 @@ const Login = ({ handleCancel, isModalVisible }) => {
             setIsLoggedIn(loggedInCustomer);
             message.success('Đăng nhập thành công!');
             handleCancel();
+            navigate("/");
         } catch (error) {
             message.error('Đăng nhập thất bại. Vui lòng thử lại.');
         }

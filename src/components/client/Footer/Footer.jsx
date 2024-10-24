@@ -1,7 +1,7 @@
 import React from 'react';
 import { Row, Col } from 'antd';
 import { FacebookOutlined, InstagramOutlined, YoutubeOutlined, TwitterOutlined, AppleOutlined } from '@ant-design/icons';
-
+import logo from "../../../assets/logo.png";
 const Footer = () => {
     return (
         <div className='footer' style={{ backgroundColor: "#101010", color: 'white', marginTop: "50px",borderTop: "5px solid #1f2325" }}>
@@ -10,24 +10,24 @@ const Footer = () => {
                 <Col xs={24} md={24} xl={8}>
                     <div style={{ textAlign: 'center', color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
                         <img
-                            src="https://assets.glxplay.io/web/images/logoglx.svg"  // Replace with your actual logo URL
-                            alt="Galaxy Play Logo"
-                            style={{ width: '150px', marginBottom: '10px' }}
+                            src={logo}  // Replace with your actual logo URL
+                            alt="Beta Logo"
+                            style={{ width: '100px' }}
                         />
-                        <p>
-                            Galaxy Play is a service provided by Galaxy Play Corporation, a member of Galaxy Entertainment and Education Corporation (GEE.,JSC).
+                        <p style={{margin:"0"}}>
+                        Beta Movie is a service provided by Beta Group
                         </p>
                         <p>
-                            Address: 59 Vo Nguyen Giap, Thao Dien Ward, Thu Duc City, Ho Chi Minh City, Vietnam.
+                        Address: 1658 Ngo Quyen, An Hai Bac, Son Tra, Da Nang, Vietnam.
                         </p>
                         <p>
-                            Business Registration Number: 0106539659.
+                        Business registration number: 01065XXXX.
                         </p>
                         <p>
-                            Date of Business Registration: 15/5/2014.
+                        Date of business registration number issuance: 1X/ 1X/ 202X.
                         </p>
                         <p>
-                            Place of Registration: Hanoi Department of Planning and Investment.
+                        Place of issuance: Department of Planning and Investment, Da Nang.
                         </p>
                     </div>
                 </Col>
@@ -42,9 +42,9 @@ const Footer = () => {
                         </div>
                         <div >
                             <h2>HỖ TRỢ</h2>
-                            <p>1900 8675 (24/7)</p>
-                            <p>play@galaxy.com.vn</p>
-                            <p><a href="https://galaxyplay.vn/help" style={{ color: 'white' }}>https://galaxyplay.vn/help</a></p>
+                            <p>097131123X</p>
+                            <p>truongcon.work77@gmail.com</p>
+                            <p><a href="#" style={{ color: 'white' }}>https://beta.vn/help</a></p>
                         </div>
                     </div>
                 </Col>
