@@ -38,7 +38,7 @@ const MovieDetail = () => {
     <>
       <div className='slide'>
         <Image src={movie?.imgUrl} preview={false} />
-        <div className="content">
+        <div className="content vfdsvdfcvxbbdfcfv">
           <h3 data-shadow-text={movie?.nameMovie}>{movie?.nameMovie}</h3>
           <h4><strong>Duration: </strong>{movie?.duration}</h4>
           <h4>{movie?.categoryName}</h4>

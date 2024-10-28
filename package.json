@@ -19,7 +19,8 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.1",
     "react-scripts": "^5.0.1",
-    "sass": "^1.69.5"
+    "sass": "^1.69.5",
+    "talkjs": "^0.30.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",

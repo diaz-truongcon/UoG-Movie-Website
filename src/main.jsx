@@ -12,6 +12,7 @@ import { FeaturesProvider } from './context/ContextFeatures';
 import { CommentsProvider } from './context/CommentsProvider'; // Import CommentsProvider
 import { FavoritesProvider } from './context/FavoritesProvider';
 import { WatchHistoryProvider } from './context/WatchHistoryProvider';
+import { MessagesProvider } from './context/MessagesProvider';
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
@@ -25,7 +26,9 @@ ReactDOM.render(
                   <CommentsProvider>
                     <CustomerLoginProvider>
                       <FavoritesProvider>
-                        <App />
+                        <MessagesProvider>
+                          <App />
+                        </MessagesProvider>
                       </FavoritesProvider>
                     </CustomerLoginProvider>
                   </CommentsProvider>

@@ -6,7 +6,7 @@ import { CustomerLoginContext } from '../../../context/CustomerLoginContext'; //
 import { addDocument } from "../../../Service/FirebaseService"; // Function to add document to Firestore
 import { getPackagesByPlan } from "../../../Service/FirebaseService"; // Fetch packages by plan
 import { ContextPlans } from '../../../context/PlansContext';
-
+import { paymentMethods, initialOptions } from "../../../utils/Contants";
 const PaymentPage = () => {
     const { isLoggedIn } = useContext(CustomerLoginContext); // Get user info from context
     const [selectedPlan, setSelectedPlan] = useState(null);
@@ -38,16 +38,6 @@ const PaymentPage = () => {
         selectedPlanRef.current = selectedPlan; // Fixed typo
     }, [selectedPackage, selectedPlan]);
 
-    const paymentMethods = [
-        { title: 'Thẻ tín dụng', icon: '💳' },
-        { title: 'Thẻ ATM', icon: '🏧' },
-        { title: 'Ví MoMo', icon: '📱' },
-        { title: 'Ví ZaloPay', icon: '📲' },
-        { title: 'Ví ShopeePay', icon: '🛒' },
-        { title: 'VNPAY', icon: '💸' },
-    ];
-console.log(selectedPackage);
-
     const handlePlanChange = (id) => {
         const newSelectedPackage = packages.find((pkg) => pkg.id === id);
         setSelectedPackage(newSelectedPackage);
@@ -55,13 +45,6 @@ console.log(selectedPackage);
 
     const handlePaymentMethodChange = (method) => {
         setPaymentMethod(method);
-    };
-
-    // PayPal options configuration
-    const initialOptions = {
-        "client-id": "Afvf_3ThHxeE4RD-KYEvws_gV6XvT2OzDbbZLnxY7HbUj1ShElGTlwvyXRNE9D9OsXNlp5JxBjXKz9zo",
-        currency: "USD",
-        intent: "capture"
     };
 
  // Function to create a subscription in Firestore

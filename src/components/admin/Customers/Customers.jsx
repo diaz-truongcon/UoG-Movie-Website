@@ -86,9 +86,6 @@ function Customers() {
         });
     };
 
-    const togglePasswordVisibility = (id) => {
-        setVisiblePasswordId((prevId) => (prevId === id ? null : id));
-    };
     // Filter customers based on search term
     const filteredCustomers = customers.filter(customer =>
         customer.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -137,13 +134,8 @@ function Customers() {
                                     {record.password ? (
                                         <Input.Password
                                             value={record.password}
-                                            visibilityToggle={{
-                                                visible: visiblePasswordId === record.id,
-                                                onVisibleChange: () => togglePasswordVisibility(record.id),
-                                            }}
-                                            iconRender={(visible) =>
-                                                visible ? <EyeOutlined /> : <EyeInvisibleOutlined />
-                                            }
+                                            disabled                
+                                            suffix={<EyeInvisibleOutlined />} 
                                             style={{ width: '150px' }}
                                         />
                                     ) : (
@@ -173,9 +165,10 @@ function Customers() {
                             <Form.Item
                                 label="Username"
                                 name="username"
+                               
                                 rules={[{ required: true, message: 'Please enter the customer username!' }]}
                             >
-                                <Input />
+                                <Input  disabled={!!customerEdit} />
                             </Form.Item>
                             <Form.Item
                                 label="Email"
@@ -190,7 +183,7 @@ function Customers() {
                                     name="password"
                                     rules={[{ required: true, message: 'Please enter a password!' }]}
                                 >
-                                    <Input.Password />
+                                    <Input.Password disabled={!!customerEdit} />
                                 </Form.Item>
                             )}
                             <Form.Item

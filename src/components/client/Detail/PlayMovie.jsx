@@ -8,6 +8,8 @@ import { fetchDocuments, addDocument, updateDocument } from "../../../Service/Fi
 import { ContextCustomers } from "../../../context/CustomersContext";
 import { ContextWatchHistory } from "../../../context/WatchHistoryProvider";
 import { getTopViewedMovies } from '../../../utils/ContantsFunctions';
+import { formatCommentTime } from "../../../utils/ContantsFunctions";
+import { ContextMovies } from '../../../context/MoviesContext';
 const { TextArea } = Input;
 const { Title, Paragraph, Text } = Typography;
 
@@ -23,6 +25,7 @@ function PlayMovie(props) {
     const customers = useContext(ContextCustomers);
     const watchHistories = useContext(ContextWatchHistory);
     const topViewedMovies = getTopViewedMovies(5);
+    const movies = useContext(ContextMovies);
 
     useEffect(() => {
         const listEpisode = episodes
@@ -40,7 +43,7 @@ function PlayMovie(props) {
             setComments(commentsByMovie);
         };
         fetchData();
-    }, [update,id]);
+    }, [update, id]);
 
     const handleAddComment = async () => {
         if (!isLoggedIn) {
@@ -71,27 +74,7 @@ function PlayMovie(props) {
         const customer = customers.find((item) => item.id === id);
         return customer ? customer.imgUrl : "";
     }
-    const formatCommentTime = (commentDate) => {
-        const now = new Date();
-        const createdAt = commentDate.toDate();
-        // Tính toán chênh lệch thời gian
-        const diffInMilliseconds = now - createdAt;
 
-        const diffInMinutes = Math.floor(diffInMilliseconds / (1000 * 60));
-        const diffInHours = Math.floor(diffInMilliseconds / (1000 * 60 * 60));
-        const diffInDays = Math.floor(diffInMilliseconds / (1000 * 60 * 60 * 24));
-
-        if (diffInMinutes < 60) {
-            return `${diffInMinutes} minutes ago`; // Hiển thị số phút trước nếu dưới 1 giờ
-        } else if (diffInHours < 24) {
-            return `${diffInHours} hours ago`; // Hiển thị số giờ trước nếu dưới 1 ngày
-        } else if (diffInDays <= 10) {
-            return `${diffInDays} days ago`; // Hiển thị số ngày trước nếu từ 1 đến 10 ngày
-        } else {
-            return new Date(commentDate).toLocaleDateString(); // Hiển thị ngày bình luận nếu quá 10 ngày
-        }
-    };
-    
     const handleWatchHistory = async (episode) => {
         if (isLoggedIn) {
             const watchHistory = {
@@ -110,12 +93,14 @@ function PlayMovie(props) {
             }
         }
     };
-const  getEpisode = (episode) => {
-    setMovie(episode);
-    handleWatchHistory(episode);
-}
+    const getEpisode = async (episode) => {
+        setMovie(episode);
+        handleWatchHistory(episode);
+        const movie = movies.find(m => m.id === id);
+        await updateDocument('Movies', id, { views: movie.views + 1 });
+    }
     return (
-        <div style={{ marginTop: "70px"}}>
+        <div style={{ marginTop: "70px" }}>
             {/* Movie player */}
             <iframe
                 width="100%"
@@ -163,19 +148,19 @@ const  getEpisode = (episode) => {
                             .sort((a, b) => b.createdAt.toDate() - a.createdAt.toDate()) // Sắp xếp theo thời gian mới nhất
                             .map((comment, index) => (
                                 <Row gutter={[16, 16]} style={{ marginTop: '20px' }} key={index}>
-                                    <Col xs={4} lg={4} style={{ display: 'flex',flexDirection:"column", gap:"5px" }}>
+                                    <Col xs={4} lg={4} style={{ display: 'flex', flexDirection: "column", gap: "5px" }}>
                                         <Image
                                             src={getCustomerImg(comment.idCustomer)}
                                             preview={false}
                                             style={{ borderRadius: '50%', width: '60px', height: '60px' }}
                                         />
-                                        <Title style={{ color: "white", fontSize:"0.6rem"}}>
-                                               Xuân Trường
-                                            </Title>
+                                        <Title style={{ color: "white", fontSize: "0.6rem" }}>
+                                            Xuân Trường
+                                        </Title>
                                     </Col>
                                     <Col xs={20} lg={20} style={{ background: 'white', padding: '10px', borderRadius: '8px' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center',justifyContent: 'space-between' }}>
-                                            <Title level={4} style={{  }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                            <Title level={4} style={{}}>
                                                 {getCustomerName(comment.idCustomer)}
                                             </Title>
                                             <Text type="secondary" style={{ marginLeft: '10px' }}>

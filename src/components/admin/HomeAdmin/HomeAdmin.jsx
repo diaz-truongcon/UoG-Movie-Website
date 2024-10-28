@@ -29,6 +29,7 @@ import Profile from '../Profile/Profile';
 import Features from '../Vip/Features';
 import "../../../styles/Admin.css";
 import logo from "../../../assets/logo.png"
+import ChatBoxAdmin from '../../client/Chat/ChatBoxAdmin';
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 
@@ -105,8 +106,11 @@ const HomeAdmin = ({ currentTheme, setCurrentTheme }) => {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
-        <div className="logo" style={{ height: '50px' }}>
-          <img src={logo} alt="" style={{ height: '50px' }} />
+        <div className="logo" style={{ height:"50px"}} >
+          <img src={logo} alt=""  style={{
+    width: collapsed ? "auto" : "40%", // Kiểm tra colgap, nếu true thì 40%, nếu không thì auto hoặc giá trị khác
+    margin: collapsed ? "initial" : "auto" // margin auto khi colgap là true, nếu không thì giữ giá trị mặc định
+  }}  />
         </div>
         <Menu theme="dark" selectedKeys={[selectedKey]} mode="inline">
           {menuItems.map(item => (
@@ -164,6 +168,7 @@ const HomeAdmin = ({ currentTheme, setCurrentTheme }) => {
         </Content>
         <Footer style={{ textAlign: 'center' }}>Ant Design Admin ©2023 Created by You</Footer>
       </Layout>
+      <ChatBoxAdmin/>
     </Layout>
   );
 };

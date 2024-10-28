@@ -51,7 +51,7 @@ const Login = ({ handleCancel, isModalVisible }) => {
 
         const newCustomer = {
             username,
-            imgUrl: "https://ss-images.saostar.vn/wp700/pc/1613810558698/Facebook-Avatar_3.png",
+            imgUrl: "https://firebasestorage.googleapis.com/v0/b/uog-movie-website.appspot.com/o/Pictures%2Favt.jpg?alt=media&token=135e247d-b8ae-4c0d-aa37-7aae7e61014b",
             role: ROLES.USER,
             password,
         };

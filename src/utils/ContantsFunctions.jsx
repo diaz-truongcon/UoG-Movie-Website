@@ -64,3 +64,24 @@ export const handleClick = async (movie, isLoggedIn, plans, navigate) => {
         navigate(`/subscriptionplan`);
     }
 };
+
+export const formatCommentTime = (commentDate) => {
+    const now = new Date();
+    const createdAt = commentDate.toDate();
+    // Tính toán chênh lệch thời gian
+    const diffInMilliseconds = now - createdAt;
+
+    const diffInMinutes = Math.floor(diffInMilliseconds / (1000 * 60));
+    const diffInHours = Math.floor(diffInMilliseconds / (1000 * 60 * 60));
+    const diffInDays = Math.floor(diffInMilliseconds / (1000 * 60 * 60 * 24));
+
+    if (diffInMinutes < 60) {
+        return `${diffInMinutes} minutes ago`; // Hiển thị số phút trước nếu dưới 1 giờ
+    } else if (diffInHours < 24) {
+        return `${diffInHours} hours ago`; // Hiển thị số giờ trước nếu dưới 1 ngày
+    } else if (diffInDays <= 10) {
+        return `${diffInDays} days ago`; // Hiển thị số ngày trước nếu từ 1 đến 10 ngày
+    } else {
+        return new Date(commentDate).toLocaleDateString(); // Hiển thị ngày bình luận nếu quá 10 ngày
+    }
+};

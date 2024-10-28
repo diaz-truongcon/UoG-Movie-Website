@@ -15,6 +15,8 @@ import FAQ from '../Support/FAQ';
 import "../../../styles/Client.css";
 import RentMovies from '../Main/RentMovies';
 import Promotions from '../Support/Promotions';
+import ChatBoxUsers from '../Chat/ChatBoxUsers';
+import RentMovie from '../Vip/RentMovie';
 function Home() {
        
   return (
@@ -33,7 +35,9 @@ function Home() {
           <Route path="/rent_movies" element={<RentMovies/>} />
           <Route path="/faq" element={<FAQ/>} />
           <Route path="/promotions" element={<Promotions/>} />
+          <Route path="/rentmovie" element={<RentMovie/>} />
         </Routes>
+        <ChatBoxUsers/>
         <Footer></Footer>
       </div>
 

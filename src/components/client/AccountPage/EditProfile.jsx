@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import { Layout, Form, Input, Button, Radio, Col, message } from 'antd';
+import { Layout, Form, Input, Button, Radio, Col, message, Row } from 'antd';
 import { AppleOutlined, FacebookOutlined, GoogleOutlined } from '@ant-design/icons';
-import { updateDocument } from "../../../Service/FirebaseService";
+import { addUser } from '../../../Service/CustomersService';
 const { Content } = Layout;
 function EditProfile({ isLoggedIn, imgUpload }) {
     const [form] = Form.useForm();
@@ -13,15 +13,7 @@ function EditProfile({ isLoggedIn, imgUpload }) {
     const handleOk = async () => {
         try {
             const values = await form.validateFields();
-            const { id, gender, phone, ...newCustomer } = values;
-            // Chỉ thêm gender và phone vào newCustomer nếu chúng không phải là undefined
-            if (gender !== undefined) {
-                newCustomer.gender = gender;
-            }
-            if (phone !== undefined) {
-                newCustomer.phone = phone;
-            }      
-            await updateDocument('Customers', isLoggedIn.id, newCustomer, imgUpload);
+            addUser(values, imgUpload);
             message.success('Customers updated successfully!');
         } catch (error) {
             message.error('Failed to save customers. Please try again.');
@@ -37,20 +29,36 @@ function EditProfile({ isLoggedIn, imgUpload }) {
                     backgroundColor: '#fff',
                 }}
             >
-                <h2>Thông tin tài khoản</h2>
+                <h2 style={{ textAlign: "center", marginBottom: "10px" }}>Thông tin tài khoản</h2>
                 <Form
                     layout="vertical"
                     form={form}
                     onFinish={handleOk}
                 >
-                    <Form.Item label="Họ và tên" name="username">
+                    <Form.Item label="Họ và tên" name="name">
                         <Input />
                     </Form.Item>
-                    <Form.Item label="Email" name="id">
-                        <Input disabled suffix={<span style={{ color: 'green' }}>✓</span>} />
-                    </Form.Item>
+
+                    <Row gutter={16}>
+                        <Col span={12}>
+                            <Form.Item label="Username" name="username">
+                                <Input
+                                    disabled
+                                    suffix={<span style={{ color: 'green' }}>✓</span>}
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item label="Email" name="id">
+                                <Input
+                                    disabled
+                                    suffix={<span style={{ color: 'green' }}>✓</span>}
+                                />
+                            </Form.Item>
+                        </Col>
+                    </Row>
                     <Form.Item label="Giới tính" name="gender">
-                        <Radio.Group>
+                        <Radio.Group style={{ flexDirection: "row" }}>
                             <Radio value="male">Nam</Radio>
                             <Radio value="female">Nữ</Radio>
                             <Radio value="other">Khác</Radio>
@@ -61,7 +69,7 @@ function EditProfile({ isLoggedIn, imgUpload }) {
                         name="phone">
                         <Input />
                     </Form.Item>
-                    <Form.Item
+                    {isLoggedIn?.password ? (<Form.Item
                         label="Mật khẩu"
                         name="password"
                         rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
@@ -70,10 +78,12 @@ function EditProfile({ isLoggedIn, imgUpload }) {
                             placeholder="Nhập mật khẩu"
                             visibilityToggle={true} // This enables the show/hide feature
                         />
-                    </Form.Item>
-                    <Button type="primary" htmlType="submit">
+                    </Form.Item>) : <span className='text-google'>Sign in with Google</span> }
+                     <p  style={{marginTop:"15px"}}>
+                     <Button type="primary" htmlType="submit">
                         Chỉnh sửa
                     </Button>
+                     </p>               
                 </Form>
                 {/* <h3 style={{ marginTop: "20px" }}>Kết nối mạng xã hội</h3>
             <Button icon={<AppleOutlined />} style={{ marginRight: 8 }}>Apple</Button>
