@@ -1,74 +1,93 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { Card, Typography, Divider, Button, Row, Col, Image } from 'antd';
+import React, { useState, useContext, useEffect, useRef } from 'react';
+import { Card, Typography, Divider, Button, Row, Col, Image, message } from 'antd';
 import { paymentMethods, initialOptions } from "../../../utils/Contants";
 import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
-import { useParams ,useNavigate } from 'react-router-dom';
-const { Text, Title, Link } = Typography;
-function RentMovie(props) {
+import { useParams, useNavigate } from 'react-router-dom';
+import { ContextMovies } from '../../../context/MoviesContext';
+import { CustomerLoginContext } from '../../../context/CustomerLoginContext';
+import { addDocument } from "../../../Service/FirebaseService"; 
+const { Text, Link } = Typography;
+
+function RentMovie() {
+    const { id } = useParams();
     const [paymentMethod, setPaymentMethod] = useState('Credit Card');
+    const movies = useContext(ContextMovies);
+    const [movie, setMovie] = useState(null);
     const navigate = useNavigate();
+    const rentPriceRef = useRef(0);
+    const { isLoggedIn } = useContext(CustomerLoginContext);
     const handlePaymentMethodChange = (method) => {
         setPaymentMethod(method);
     };
- // Function to create a subscription in Firestore
- const createSubscription = async (transactionId) => {
-    try {
-        const currentPackage = selectedPackageRef.current;
-        const plan = selectedPlanRef.current;
 
-        const startDate = new Date();
-        const expiryDate = new Date();
-        expiryDate.setMonth(startDate.getMonth() + (parseInt(currentPackage.time) || 1)); 
+    useEffect(() => {
+        const foundMovie = movies?.find((element) => element.id === id);
+        if (foundMovie) {
+            setMovie(foundMovie);
+        }
+        rentPriceRef.current = foundMovie?.rentalPrice;
+    }, [id, movies]);
 
-        await addDocument('Rentmovies', {
-            idUser: isLoggedIn.id,
-            idmovie: plan.id,
-            price: price,
-            expiryDate: expiryDate,
-            paymentMethod: paymentMethod,
-            transactionId: transactionId,
-        });
-     message.success('Rentmovies created successfully!');
-     navigate("/");
-    } catch (error) {
-        console.error('Error creating Rentmovies:', error);
-    }
-};
+    const createSubscription = async (transactionId) => {
+        try {    
+            const startDate = new Date();
+            const expiryDate = new Date();
+            expiryDate.setMonth(startDate.getMonth() +  1); 
+            await addDocument('RentMovies', {
+                isUser: isLoggedIn.id,
+                movieId: movie?.id,
+                price: rentPriceRef.current,
+                startDate: startDate,
+                expiryDate: expiryDate,
+                paymentMethod: paymentMethod,
+                transactionId: transactionId,
+            }); 
+            message.success('Rentmovies created successfully!');
+            navigate("/");
+        } catch (error) {
+            console.error('Error creating Rentmovies:', error);
+        }
+    };
+
+    const formattedPrice = movie ? parseInt(movie.rentalPrice).toLocaleString('vi-VN') : "0";
+
     return (
         <div style={{ padding: '6%', backgroundColor: '#f2f2f2' }}>
-            <Row gutter={16}>
+            <Row gutter={[32, 16]}>
                 <Col sm={24} md={12} lg={12}>
-                    <Card title="THÔNG TIN THANH TOÁN" bordered={false} style={{ margin: 'auto' }}>
+                    <Card title="THÔNG TIN THANH TOÁN" bordered={false}>
                         <Row gutter={16}>
                             <Col span={8}>
                                 <Image
-                                    src="https://assets.glxplay.io/images/w300/title/mua-he-dep-nhat_web_posterPortrait_4ad18b8a3d76ed2c3fc66613118f3d35.jpg" // Replace with actual image URL
-                                    alt="Mùa Hè Đẹp Nhất"
+                                    src={movie?.imgUrl}
+                                    alt={movie?.nameMovie || "Movie Image"}
                                     style={{ borderRadius: 8 }}
                                 />
                             </Col>
                             <Col span={16}>
-                                <div style={{ marginBottom: 8,display:"flex", justifyContent:"space-between" }}>
+                                <div style={{ marginBottom: 8, display: "flex", justifyContent: "space-between" }}>
                                     <Text strong>Tài khoản:</Text>
-                                    <Text>0378 486 992</Text> 
+                                    <Text>0378 486 992</Text>
                                 </div>
-                                <div style={{ marginBottom: 8,display:"flex", justifyContent:"space-between" }}>
+                                <div style={{ marginBottom: 8, display: "flex", justifyContent: "space-between" }}>
                                     <Text strong>Phim:</Text>
-                                    <Text>Mùa Hè Đẹp Nhất</Text>  
+                                    <Text>{movie?.nameMovie}</Text>
                                 </div>
-                                <div style={{ marginBottom: 8,display:"flex", justifyContent:"space-between" }}>
+                                <div style={{ marginBottom: 8, display: "flex", justifyContent: "space-between" }}>
                                     <Text strong>Độ phân giải:</Text>
-                                     <Text>HD</Text>
+                                    <Text>HD</Text>
                                 </div>
-                                <div style={{ marginBottom: 8,display:"flex", justifyContent:"space-between" }}>
-                                    <Text strong>Thời hạn:</Text> <Link>48 tiếng</Link>
+                                <div style={{ marginBottom: 8, display: "flex", justifyContent: "space-between" }}>
+                                    <Text strong>Thời hạn:</Text>
+                                    <Link>{movie?.duration || 0} phút</Link>
                                 </div>
-                                <div style={{ marginBottom: 8,display:"flex", justifyContent:"space-between" }}>
-                                    <Text strong>Đơn giá:</Text> <Text type="danger">59.000đ</Text>
+                                <div style={{ marginBottom: 8, display: "flex", justifyContent: "space-between" }}>
+                                    <Text strong>Đơn giá:</Text>
+                                    <Text type="danger">{formattedPrice} VNĐ</Text>
                                 </div>
-                                <div style={{ marginBottom: 8,display:"flex", justifyContent:"space-between" }}>
-                                    <Text strong>Khuyến mãi</Text>
-                                     <Text type="danger">0đ</Text>
+                                <div style={{ marginBottom: 8, display: "flex", justifyContent: "space-between" }}>
+                                    <Text strong>Khuyến mãi:</Text>
+                                    <Text type="danger">0đ</Text>
                                 </div>
                             </Col>
                         </Row>
@@ -77,7 +96,7 @@ function RentMovie(props) {
 
                         <Row justify="space-between">
                             <Text strong>Tổng cộng</Text>
-                            <Text strong style={{ color: '#1890ff' }}>59.000đ</Text>
+                            <Text strong style={{ color: '#1890ff' }}>{formattedPrice} VNĐ</Text>
                         </Row>
 
                         <Divider />
@@ -107,30 +126,26 @@ function RentMovie(props) {
                             ))}
                         </Row>
                     </Card>
-                    <div style={{marginTop:"20px"}}>
-                    <PayPalScriptProvider options={initialOptions}>
+                    <div style={{ marginTop: "20px" }}>
+                        <PayPalScriptProvider options={initialOptions}>
                             <PayPalButtons
                                 style={{ layout: "vertical" }}
                                 createOrder={(data, actions) => {
-                                    const currentPackage = selectedPackageRef.current;
-                                    const plan = selectedPlanRef.current;
-
-                                    if (!currentPackage) {
-                                        alert("Vui lòng chọn gói trước khi thanh toán.");
-                                        return;
-                                    }
-                                    const priceInUSD = (plan.pricePerMonth * currentPackage.time * (1 - currentPackage.discount / 100) / 24000).toFixed(2); // Chuyển từ VND sang USD
+                                    const priceInUSD = (rentPriceRef.current / 24000).toFixed(2);
+                                    console.log("ut",priceInUSD);
+                                    
                                     return actions.order.create({
                                         purchase_units: [{
                                             amount: {
-                                                value: priceInUSD
+                                                value: priceInUSD,
+                                                currency_code: "USD"
                                             }
                                         }]
                                     });
                                 }}
                                 onApprove={(data, actions) => {
                                     return actions.order.capture().then((details) => {
-                                        const transactionId = details.id; // Lấy ID giao dịch từ PayPal
+                                        const transactionId = details.id;
                                         createSubscription(transactionId);
                                     });
                                 }}
@@ -140,7 +155,6 @@ function RentMovie(props) {
                             />
                         </PayPalScriptProvider>
                     </div>
-                    
                 </Col>
             </Row>
         </div>

@@ -15,11 +15,11 @@ function Main(props) {
     return (
         <>
             <Slideshow />
-            <ItemCarousel data={topLikedMovies} title="Top Phim Yêu Thích" />
-            <ItemCarousel data={topViewedMovies} title="Top Phim Được Xem Nhiều Nhất" />
-            <ItemCarousel data={randomMovies} title="Xem Gì Hôm Nay" />
-            <ItemCarousel data={movies} title="Danh Sách Phim" />
-            <ItemCarousel data={movies} title="Phim Mới Thịnh Hành Trên Galaxy" />
+            <ItemCarousel data={topLikedMovies} title="Top Favorite Movies" />
+            <ItemCarousel data={topViewedMovies} title="Top Most Viewed Movies" />
+            <ItemCarousel data={randomMovies} title="What to Watch Today" />
+            <ItemCarousel data={movies} title="Movie List From Beta Movie" />
+            <ItemCarousel data={movies} title="New Trending Movies On Beta Movie" />
         </>
     );
 }

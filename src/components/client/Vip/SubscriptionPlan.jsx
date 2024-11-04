@@ -15,7 +15,7 @@ const SubscriptionPlan = () => {
 
   const handleSelectPlan = async (plan) => {
     const userLevel = await getPlansByUser(isLoggedIn.id,plans);
-
+  // trả về level đăng ký hiện tại của người dùng
     if ( userLevel == 0) {
       // If the user has no subscription plan
       setSelectedPlan(plan);

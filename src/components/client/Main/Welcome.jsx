@@ -6,23 +6,23 @@ const { Title, Paragraph, Text } = Typography;
 function Welcome(props) {
     return (
         <div>
-            <SlideBanner/>
+            <SlideBanner />
             <div className='giaitri'>
                 <Row gutter={[32, 32]}>
                     {/* Phần giới thiệu bên trái */}
                     <Col xs={24} md={12}>
                         <Title style={{ color: '#fff' }}>
-                            Giải trí online không giới hạn hàng nghìn giờ nội dung đậm chất Việt
+                            Unlimited online entertainment with thousands of hours of Vietnamese content
                         </Title>
                         <Paragraph style={{ color: '#fff', fontSize: '16px' }}>
-                            - Bom tấn Việt chiếu rạp độc quyền và sớm nhất<br />
-                            - Thư viện phim Việt lớn nhất Việt Nam<br />
-                            - Phim Bộ độc quyền Galaxy Play<br />
-                            - Phim Bộ Hot Châu Á<br />
-                            - Siêu phẩm điện ảnh Hollywood và Disney
+                            - Exclusive and earliest Vietnamese blockbusters shown in theaters<br />
+                            - Largest Vietnamese movie library in Vietnam<br />
+                            - Exclusive Galaxy Play TV Series<br />
+                            - Hot Asian TV Series<br />
+                            - Hollywood and Disney blockbusters
                         </Paragraph>
                         <Button type="default" size="large" style={{ borderColor: '#fff', color: '#fff', background: "none" }}>
-                            Đăng ký ngay
+                            Sign up now
                         </Button>
                     </Col>
 
@@ -85,26 +85,26 @@ function Welcome(props) {
                     {/* Phần thông tin bên trái */}
                     <Col xs={24} md={12}>
                         <Paragraph style={{ color: '#fff', fontSize: '16px' }}>
-                            Chia sẻ từng khoảnh khắc cùng người thân và bạn bè
+                            Share every moment with family and friends
                         </Paragraph>
 
                         <div style={{ marginBottom: '30px', display: "flex", alignItems: "center", gap: "20px" }}>
                             <Title level={1} style={{ color: '#fff', margin: "0" }}>1</Title>
-                            <Title level={3} style={{ color: '#fff', margin: "0" }}>Tài khoản <br /> Galaxy Play Cao Cấp</Title>
-                        </div>
-
-                        <div style={{ marginBottom: '30px', display: "flex", alignItems: "center", gap: "20px" }}>
-                            <Title level={1} style={{ color: '#fff', margin: "0" }}>5</Title>
-                            <Title level={3} style={{ color: '#fff', margin: "0" }}>Thiết bị</Title>
+                            <Title level={3} style={{ color: '#fff', margin: "0" }}>Account <br /> Premium Beta Movie</Title>
                         </div>
 
                         <div style={{ marginBottom: '30px', display: "flex", alignItems: "center", gap: "20px" }}>
                             <Title level={1} style={{ color: '#fff', margin: "0" }}>4</Title>
-                            <Title level={3} style={{ color: '#fff', margin: "0" }}>Thiết bị <br /> song song cùng lúc</Title>
+                            <Title level={3} style={{ color: '#fff', margin: "0" }}>Devices</Title>
+                        </div>
+
+                        <div style={{ marginBottom: '30px', display: "flex", alignItems: "center", gap: "20px" }}>
+                            <Title level={1} style={{ color: '#fff', margin: "0" }}>3</Title>
+                            <Title level={3} style={{ color: '#fff', margin: "0" }}>Devices <br />in parallel at the same time</Title>
                         </div>
 
                         <Button type="default" size="large" style={{ borderColor: '#fff', color: '#fff', background: "none" }}>
-                            Đăng ký ngay
+                            Sign up now
                         </Button>
                     </Col>
 
@@ -119,7 +119,7 @@ function Welcome(props) {
                     </Col>
                 </Row>
                 <Title level={2} style={{ textAlign: 'center', color: '#fff', margin: "50px" }}>
-                    Bạn có 2 cách để thưởng thức Galaxy Play
+                    You have 2 ways to enjoy Beta Movie
                 </Title>
                 <Row gutter={[32, 32]} justify="center" align="middle">
                     {/* Phim gói */}
@@ -135,13 +135,13 @@ function Welcome(props) {
                             style={{ backgroundColor: '#000', color: '#fff' }}
                         >
                             <Title level={3} style={{ color: '#fff' }}>
-                                TIỆC “BUFFET”
+                                "BUFFET" PARTY
                             </Title>
                             <Button type="primary" style={{ backgroundColor: '#FFD700', color: '#000' }}>
-                                XEM PHIM GÓI
+                                WATCH MOVIES MONTHLY PACKAGE
                             </Button>
                             <Text style={{ color: '#fff', display: 'block', marginTop: '20px' }}>
-                                Chỉ 70K/tháng, thỏa thích xem hàng ngàn bộ phim gồm: Phim Việt bom tấn, phim bộ Độc Quyền Galaxy Play, phim Hollywood và Disney tuyển chọn và phim bộ Châu Á gay cấn, hấp dẫn.
+                                Only 50K/month, enjoy watching thousands of movies including: Vietnamese blockbusters, exclusive Beta Movie series, selected Hollywood and Disney movies and exciting, attractive Asian series.
                             </Text>
                         </Card>
                     </Col>
@@ -159,13 +159,13 @@ function Welcome(props) {
                             bodyStyle={{ backgroundColor: '#000', color: '#fff' }}
                         >
                             <Title level={3} style={{ color: '#fff' }}>
-                                CHỌN MÓN
+                                SELECT MOVIE
                             </Title>
                             <Button type="primary" style={{ backgroundColor: '#FFD700', color: '#000' }}>
-                                THUÊ PHIM LẺ
+                                RENT MOVIE
                             </Button>
                             <Text style={{ color: '#fff', display: 'block', marginTop: '20px' }}>
-                                Thưởng thức những bộ phim MỚI ngay sau ra rạp, tại mục Phim Thuê Đặc Sắc, trên nền tảng Galaxy Play. Bạn không cần đăng ký mua Phim Gói, mà chỉ trả theo từng Phim Thuê mình yêu thích.
+                                Enjoy NEW movies right after their release in theaters, in the Featured Movie Rental section, on the Beta Movie platform. You don't need to subscribe to a Movie Package, just pay for each Movie Rental you like.
                             </Text>
                         </Card>
                     </Col>
@@ -182,30 +182,29 @@ function Welcome(props) {
                     {/* Text Column */}
                     <Col xs={24} md={16} style={{ padding: '40px', color: 'white' }}>
                         <Title style={{ color: 'white' }}>
-                            Nội dung đặc sắc, trải nghiệm mượt mà trên thiết bị di động
+                            Great content, smooth experience on mobile devices.
                         </Title>
                         <Text style={{ fontSize: '16px', color: '#fff' }}>
-                            1 tài khoản Galaxy Play Mobile <br />
-                            1 Smartphone hoặc máy tính bảng <br />
-                            Xem mọi lúc, mọi nơi! <br />
+                            1 Beta Movie Mobile account <br />
+                            1 Smartphone or tablet<br />
+                            Watch anytime, anywhere!<br />
                         </Text>
                         <Button type="default" size="large" style={{ borderColor: '#fff', color: '#fff', background: "none", marginTop: "20px" }}>
-                            Đăng ký ngay
+                            Sign up now
                         </Button>
                     </Col>
                 </Row>
-                <Row gutter={[16, 16]} style={{  alignItems:"center" }}>
+                <Row gutter={[16, 16]} style={{ alignItems: "center" }}>
                     {/* Left Side: Text Section */}
                     <Col xs={24} md={12}>
                         <Title level={2} style={{ color: 'white' }}>
-                            Không chèn quảng cáo khi xem phim
+                            No ads when watching movies
                         </Title>
                         <Text style={{ color: '#fff', fontSize: '16px' }}>
-                            Tận hưởng trọn vẹn, không gián đoạn mỗi phút giây cảm xúc khi
-                            thưởng thức bộ phim yêu thích. <br />
+                            Enjoy every emotional moment without interruption while watching your favorite movie,<br /> a great way to dispel fatigue, stress and regain balance in life. <br />
                         </Text>
                         <Button type="default" size="large" style={{ borderColor: '#fff', color: '#fff', background: "none", marginTop: "20px" }}>
-                            Đăng ký ngay
+                            Sign up now
                         </Button>
                     </Col>
 

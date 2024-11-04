@@ -4,3 +4,8 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;    
 }
+.card-top {
+    .ant-card-head-title {
+      color: white;
+    }
+}

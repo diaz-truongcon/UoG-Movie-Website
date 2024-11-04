@@ -2,10 +2,11 @@ import React, { useEffect } from 'react';
 import { Layout, Form, Input, Button, Radio, Col, message, Row } from 'antd';
 import { AppleOutlined, FacebookOutlined, GoogleOutlined } from '@ant-design/icons';
 import { addUser } from '../../../Service/CustomersService';
+import { useAccount } from '../../../context/AccountProvider';
 const { Content } = Layout;
-function EditProfile({ isLoggedIn, imgUpload }) {
+function EditProfile() {
     const [form] = Form.useForm();
-
+    const { isLoggedIn, imgUpload } = useAccount();
     useEffect(() => {
         form.setFieldsValue(isLoggedIn);
     }, [isLoggedIn]);

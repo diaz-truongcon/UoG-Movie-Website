@@ -17,19 +17,12 @@ import {
   StarOutlined,
   ContainerOutlined
 } from '@ant-design/icons';
-import Categories from '../Categories/Categories';
-import Movies from '../Movies/Movies';
-import Comments from '../Movies/Comments';
-import Customers from '../Customers/Customers';
-import Episodes from '../Episodes/Episodes';
 import { CustomerLoginContext } from '../../../context/CustomerLoginContext';
-import Plans from '../Vip/Plans';
-import Packages from '../Vip/Packages';
-import Profile from '../Profile/Profile';
-import Features from '../Vip/Features';
+
 import "../../../styles/Admin.css";
 import logo from "../../../assets/logo.png"
 import ChatBoxAdmin from '../../client/Chat/ChatBoxAdmin';
+import AdminRouters from '../../../routes/AdminRouters';
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 
@@ -106,11 +99,11 @@ const HomeAdmin = ({ currentTheme, setCurrentTheme }) => {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
-        <div className="logo" style={{ height:"50px"}} >
-          <img src={logo} alt=""  style={{
-    width: collapsed ? "auto" : "40%", // Kiểm tra colgap, nếu true thì 40%, nếu không thì auto hoặc giá trị khác
-    margin: collapsed ? "initial" : "auto" // margin auto khi colgap là true, nếu không thì giữ giá trị mặc định
-  }}  />
+        <div className="logo" style={{ height: "50px" }} >
+          <img src={logo} alt="" style={{
+            width: collapsed ? "auto" : "40%", // Kiểm tra colgap, nếu true thì 40%, nếu không thì auto hoặc giá trị khác
+            margin: collapsed ? "initial" : "auto" // margin auto khi colgap là true, nếu không thì giữ giá trị mặc định
+          }} />
         </div>
         <Menu theme="dark" selectedKeys={[selectedKey]} mode="inline">
           {menuItems.map(item => (
@@ -152,23 +145,12 @@ const HomeAdmin = ({ currentTheme, setCurrentTheme }) => {
             <Breadcrumb.Item>Bill</Breadcrumb.Item> */}
           </Breadcrumb>
           <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-            <Routes>
-              <Route path="/dashboard" element={<div>Dashboard</div>} />
-              <Route path="/categories" element={<Categories />} />
-              <Route path="/movies" element={<Movies />} />
-              <Route path="/episodes" element={<Episodes />} />
-              <Route path="/customers" element={<Customers />} />
-              <Route path="/comments" element={<Comments />} />
-              <Route path="/vip/plans" element={<Plans/>} />
-              <Route path="/vip/packages" element={<Packages/>} />
-              <Route path="/vip/features" element={<Features/>} />
-              <Route path="/profile" element={<Profile/>} />
-            </Routes>
+            <AdminRouters />
           </div>
         </Content>
         <Footer style={{ textAlign: 'center' }}>Ant Design Admin ©2023 Created by You</Footer>
       </Layout>
-      <ChatBoxAdmin/>
+      <ChatBoxAdmin />
     </Layout>
   );
 };

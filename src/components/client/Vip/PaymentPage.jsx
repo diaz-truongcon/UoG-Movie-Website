@@ -52,7 +52,7 @@ const createSubscription = async (transactionId) => {
     try {
         const currentPackage = selectedPackageRef.current;
         const plan = selectedPlanRef.current;
-
+        const priceInUSD = plan.pricePerMonth * currentPackage.time * (1 - currentPackage.discount / 100);
         const startDate = new Date();
         const expiryDate = new Date();
         expiryDate.setMonth(startDate.getMonth() + (parseInt(currentPackage.time) || 1)); 
@@ -64,6 +64,7 @@ const createSubscription = async (transactionId) => {
             expiryDate: expiryDate,
             paymentMethod: paymentMethod,
             transactionId: transactionId,
+            price: priceInUSD
         });
      message.success('Subscription created successfully!');
      navigate("/");

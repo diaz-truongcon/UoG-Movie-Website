@@ -35,13 +35,13 @@ const Footer = () => {
                 <Col xs={24} md={16} xl={8}>
                     <div className='footer-introduce' style={{ display: 'flex', alignItems: "center", height: "100%", justifyContent: "space-around", marginTop: "1em" }}>
                         <div >
-                            <h2>GIỚI THIỆU</h2>
-                            <p>Quy chế sử dụng Dịch vụ</p>
-                            <p>Chính sách bảo mật</p>
-                            <p>Khuyến mãi</p>
+                            <h2>ABOUT BETA MOVIE</h2>
+                            <p>Terms of Service</p>
+                            <p>Privacy Policy</p>
+                            <p>Promotions</p>
                         </div>
                         <div >
-                            <h2>HỖ TRỢ</h2>
+                            <h2>SUPPORT</h2>
                             <p>097131123X</p>
                             <p>truongcon.work77@gmail.com</p>
                             <p><a href="#" style={{ color: 'white' }}>https://beta.vn/help</a></p>
@@ -52,7 +52,7 @@ const Footer = () => {
                     <div style={{ display: 'flex', alignItems: "center", height: "100%", marginTop: "2.5em" }}>
                         {/* Images */}
                         <div>
-                        <h2>TẢI ỨNG DỤNG</h2>
+                        <h2>DOWNLOAD APP</h2>
                         <div className='application' style={{marginTop:"1em"}}>                   
                             <div>
                                 <img
@@ -69,7 +69,7 @@ const Footer = () => {
                         </div>
                         {/* Social Icons */}
                         <div>
-                            <h2>KẾT NỐI VỚI CHÚNG TÔI</h2>
+                            <h2>CONNECT WITH US VIA</h2>
                             <div style={{ fontSize: '24px', display: 'flex', justifyContent: "space-between",marginTop: "0.5em" }}>
                                 <FacebookOutlined style={{ color: 'white' }} />
                                 <InstagramOutlined style={{ color: 'white' }} />

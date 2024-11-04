@@ -8,8 +8,8 @@ function RentMovies(props) {
     return (
         <>
             <SlideRent />
-            <ItemCarousel data={movies} title="Phim Mới Thịnh Hành Trên Galaxy" />
-            <ItemCarousel data={movies} title="Phim Mới Thịnh Hành Trên Galaxy" />
+            <ItemCarousel data={movies} title="New Trending Movies On Beta Movie" />
+            <ItemCarousel data={movies} title="New Trending Movies On Beta Movie" />
         </>
     );
 }

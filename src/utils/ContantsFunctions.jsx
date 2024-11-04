@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { ContextMovies } from '../context/MoviesContext';
-import { checkVipEligibility } from '../Service/FirebaseService';
-
+import { checkVipEligibility, checkIfMovieRented } from '../Service/FirebaseService';
+import { message } from 'antd';
 // Using `useContext` inside a function that can be reused
 export const getTopLikedMovies = (count) => {
     const movies = useContext(ContextMovies);
@@ -57,9 +57,18 @@ export const handleClick = async (movie, isLoggedIn, plans, navigate) => {
         return;
     }   
     const status = await checkVipEligibility(isLoggedIn.id, plans, movie);
-
     if (status) {
         navigate(`/moviedetail/${movie.id}`);
+        return;
+     }
+    const checkRentMovie = await checkIfMovieRented(isLoggedIn.id, movie.id);
+    if (checkRentMovie) {
+        navigate(`/moviedetail/${movie.id}`);
+        return;
+    }
+    const plan = plans.find(p => p.id === movie.vip);
+    if(plan.level > 2) {
+        navigate(`/rentmovie/${movie.id}`);
     } else {
         navigate(`/subscriptionplan`);
     }
@@ -84,4 +93,23 @@ export const formatCommentTime = (commentDate) => {
     } else {
         return new Date(commentDate).toLocaleDateString(); // Hiển thị ngày bình luận nếu quá 10 ngày
     }
+};
+// Function to format Firebase timestamp and calculate expiry date
+export const formatFirebaseTimestamp = (timestamp, additionalDays = 0) => {
+    const date = new Date(timestamp.seconds * 1000);
+    date.setDate(date.getDate() + additionalDays);
+    return date.toLocaleDateString('vi-VN'); // Convert to Vietnamese date format
+};
+
+export const calculateRemainingDays = (expiryDate) => {
+    // Split the expiryDate in DD/MM/YYYY format
+    const [day, month, year] = expiryDate.split('/').map(Number);
+    // Create a Date object in the format YYYY, MM (0-indexed), DD
+    const expiry = new Date(year, month - 1, day);
+
+    const today = new Date();
+
+    const diffTime = expiry - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays >= 0 ? diffDays : 0; // Return 0 if the date is past
 };

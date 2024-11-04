@@ -5,6 +5,21 @@ export const ROLES = {
   USER: 'user',          // Người dùng thông thường
 };
 
+export const COLORS = [
+  '#0088FE', // Blue
+  '#00C49F', // Teal
+  '#FFBB28', // Yellow
+  '#FF8042', // Orange
+  '#A28FFB', // Lavender
+  '#F765A3', // Pink
+  '#FF6B6B', // Coral
+  '#4CAF50', // Green
+  '#FFD700', // Gold
+  '#8A2BE2', // BlueViolet
+  '#FF4500', // OrangeRed
+  '#20B2AA'  // LightSeaGreen
+];
+
 export const paymentMethods = [
   { title: 'Thẻ tín dụng', icon: '💳' },
   { title: 'Thẻ ATM', icon: '🏧' },
@@ -24,6 +39,5 @@ export const YOUR_SERVICE_ID = "service_40itax5";
 export const YOUR_TEMPLATE_ID = "template_3sv1wre";
 export const YOUR_USER_ID = "u8fGoHrGLgijPLihn";
 export const CONFIRM_CODE = "template_ct72dkc";
-
 
 

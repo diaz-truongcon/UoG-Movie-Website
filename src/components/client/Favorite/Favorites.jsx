@@ -85,8 +85,6 @@ function Favorites() {
                                         <Typography.Text style={{ margin: 0, color: 'white' }}>{getMovieDetails(item.idMovie).describe.length > 40 ? `${getMovieDetails(item.idMovie).describe.substring(0, 40)}...` : getMovieDetails(item.idMovie).describe}</Typography.Text> <br/>
                                          <Typography.Text style={{ margin: 0, color: 'white' }}>{formatCommentTime(item.watchedAt)}</Typography.Text>
                                         </>
-                                   
-                                
                                 }
                                 />
                             </List.Item>

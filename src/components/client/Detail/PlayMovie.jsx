@@ -10,6 +10,7 @@ import { ContextWatchHistory } from "../../../context/WatchHistoryProvider";
 import { getTopViewedMovies } from '../../../utils/ContantsFunctions';
 import { formatCommentTime } from "../../../utils/ContantsFunctions";
 import { ContextMovies } from '../../../context/MoviesContext';
+import ListTop from '../Favorite/ListTop';
 const { TextArea } = Input;
 const { Title, Paragraph, Text } = Typography;
 
@@ -17,7 +18,7 @@ function PlayMovie(props) {
     const [episodesByMovie, setEpisodesByMovie] = useState([]);
     const [comments, setComments] = useState([]);
     const [update, setUpdate] = useState(false);
-    const [movie, setMovie] = useState(null);
+    const [movie, setMovie] = useState({});
     const [commentText, setCommentText] = useState('');
     const { id } = useParams();
     const episodes = useContext(ContextEpisodes);
@@ -178,42 +179,7 @@ function PlayMovie(props) {
                     </Col>
                     <Col xs={24} lg={12} >
                         <Title level={4} style={{ margin: 0, color: "yellow" }}><StarOutlined /> TOP BẢNG XẾP HẠNG</Title>
-                        <List
-                            itemLayout="horizontal"
-                            dataSource={topViewedMovies}
-                            renderItem={item => (
-                                <List.Item style={{ borderBottom: "1px solid white" }}>
-                                    <List.Item.Meta
-                                        avatar={<Avatar shape="square" size={64} src={item.imgUrl} />}
-                                        title={
-                                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                                <Typography.Title level={4} style={{ margin: 0, color: 'white' }}>
-                                                    {item.nameMovie}
-                                                </Typography.Title>
-                                                <Badge
-                                                    count={item.duration}
-                                                    style={{
-                                                        backgroundColor: '#d4380d',
-                                                        color: 'white',
-                                                        fontWeight: 'bold'
-                                                    }}
-                                                />
-                                            </div>
-                                        }
-                                        description={
-                                            <>
-                                                <Typography.Text style={{ margin: 0, color: 'white' }}>{item.describe.length > 60 ? `${item.describe.substring(0, 60)}...` : item.describe}</Typography.Text>
-                                                <div>
-                                                    <Typography.Text type="secondary" style={{ margin: 0, color: 'white' }}>
-                                                        <FireOutlined /> {item.views} Lượt xem
-                                                    </Typography.Text>
-                                                </div>
-                                            </>
-                                        }
-                                    />
-                                </List.Item>
-                            )}
-                        />
+                        <ListTop  data={getTopViewedMovies(5)} />
                     </Col>
                 </Row>
             </div>

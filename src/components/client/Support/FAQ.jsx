@@ -1,115 +1,113 @@
 import React from 'react';
-import { Row, Col, Card,Typography } from 'antd';
+import { Row, Col, Card, Typography } from 'antd';
 import { MailOutlined, PhoneOutlined } from '@ant-design/icons';
 const { Title, Text } = Typography;
 const FAQ = () => {
   const data = [
     {
-      title: "PHƯƠNG THỨC THANH TOÁN",
+      title: "PAYMENT METHOD",
       content: [
-        "Galaxy Play có dịch vụ thanh toán qua thẻ cào không?",
-        "Trên Galaxy Play hiện nay có những phương thức thanh toán nào đang áp dụng?",
-        "Khi đã đăng ký gói F10 (MobiFone), tôi có bị trừ cước khi xem Galaxy Play bằng 3G/4G không?",
-        "Gói F10 có tự động gia hạn hay không?",
-        "Tôi không muốn sử dụng gói F10 nữa thì hủy như thế nào?",
+        "Does Beta Movie have a scratch card payment service?",
+        "What payment methods are currently available on Beta Movie?",
+        "Once I have registered for the GV119 package, will I be charged when watching Beta Movie via 3G/4G?",
+        "Will the GV119 package automatically renew?",
       ],
-      link: "Xem thêm",
+      link: "More",
     },
     {
-      title: "THÔNG TIN GALAXY PLAY",
+      title: "BETA MOVIE INFORMATION",
       content: [
-        "Galaxy Play là gì?",
-        "Galaxy Play có những danh mục sản phẩm nào?",
-        "Galaxy Play có thể xem trên thiết bị nào?",
-        "Phim Thuê là gì?",
-        "Phim Theo Gói là gì?",
+        "What is Beta Movie?",
+        "What are the product categories of Beta Movie?",
+        "What devices can Beta Movie be viewed on?",
+        "What is a Movie Rental?",
+        "What is a Movie Package?",
       ],
-      link: "Xem thêm",
+      link: "More",
     },
     {
-      title: "CÂU HỎI THƯỜNG GẶP",
+      title: "OTHER FREQUENTLY ASKED QUESTIONS",
       content: [
-        "Tài khoản Galaxy Play có thể đăng nhập và xem được bao nhiêu thiết bị?",
-        "Có bị giới hạn số lượng phim tải về hay không?",
-        "Sau khi thuê phim trong mục Phim Có Phí, tôi có thể tải về phim về được không?",
-        "Làm thế nào để hủy tài khoản?",
-        "Tôi có thể xem các phim đã tải về đủ ngày hay không?",
+        "How many devices can I log in and watch on with a Beta account?",
+        "Is there a limit to the number of movies I can download?",
+        "Can I download the movie after renting it in the Premium Movies section?",
+        "Can I watch movies that have been downloaded for a certain amount of time?",
       ],
-      link: "Xem thêm",
+      link: "More",
     },
     {
-      title: "GÓI DỊCH VỤ",
+      title: "SERVICE PACKAGES AT BETA MOVIE",
       content: [
-        "Gói FIM30 là gì?",
-        "Tôi có thể đăng ký gói FIM30 như thế nào?",
-        "Gói FIM30 có thể sử dụng kèm theo các gói data khác của MobiFone hay không?",
-        "Tôi đã đăng ký gói FIM30, tài khoản của tôi có thể được dùng trên các thiết bị khác không?",
-        "Gói FIM2 là gì?",
+        "What is a VIP package?",
+        "How can I register for a VIP package?",
+        "Can the SVIP package be used with other MobiFone data packages?",
+        "I have registered for the SVIP package, can my account be used on other devices?",
+        "What is a VVIP package?",
       ],
-      link: "Xem thêm",
+      link: "More",
     }
   ];
 
   return (
     <div style={{ padding: '20px' }}>
       <div
-      style={{
-        backgroundImage: `url('https://galaxyplay.vn/static/fp_assets/img/SupportPageBackground.png')`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        padding: '100px 0',
-        color: '#fff',
-        textAlign: 'center',
-      }}
-    >
-      <Row justify="center">
-        <Col span={24}>
-          <Title level={2} style={{ color: '#fff' }}>
-            Khách hàng cần chúng tôi hỗ trợ?
-          </Title>
-          <Text style={{ fontSize: '16px', color: '#fff' }}>
-            Hỗ trợ giải đáp các vấn đề trong quá trình sử dụng Dịch vụ Galaxy Play.
-          </Text>
-        </Col>
-      </Row>
-
-      <Row justify="center" style={{ marginTop: '20px' }}>
-        <Col span={12}>
-          <Row justify="center" align="middle">
-            <Col span={12} style={{ textAlign: 'center' }}>
-              <MailOutlined style={{ fontSize: '24px', color: '#fff' }} />
-              <Text style={{ fontSize: '16px', color: '#fff', marginLeft: '8px' }}>
-                Email: play@galaxy.com.vn
-              </Text>
-            </Col>
-            <Col span={12} style={{ textAlign: 'center' }}>
-              <PhoneOutlined style={{ fontSize: '24px', color: '#fff' }} />
-              <Text style={{ fontSize: '16px', color: '#fff', marginLeft: '8px' }}>
-                Hotline: 19008675
-              </Text>
-            </Col>
-          </Row>
-        </Col>
-      </Row>
-    </div>
-    <div style={{background:"#f5f5f5", padding:"40px"}}>
-    <h2 style={{ textAlign: 'center',marginBottom:"20px" }}>Các câu hỏi thường gặp</h2>
-      <Row gutter={[16, 16]} justify="center">
-        {data.map((item, index) => (
-          <Col xs={24} sm={12} md={6} key={index}>
-            <Card title={item.title} bordered={false}>
-              <ul>
-                {item.content.map((question, i) => (
-                  <li key={i}>{question}</li>
-                ))}
-              </ul>
-              <a href="/#">{item.link}</a>
-            </Card>
+        style={{
+          backgroundImage: `url('https://firebasestorage.googleapis.com/v0/b/uog-movie-website.appspot.com/o/Pictures%2Fcontact.png?alt=media&token=d9151e7f-5e66-4449-b3d4-e5b5ff528873')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          padding: '100px 0',
+          color: '#fff',
+          textAlign: 'center',
+        }}
+      >
+        <Row justify="center">
+          <Col span={24}>
+            <Title level={2} style={{ color: '#fff' }}>
+              PAYMENT METHOD
+            </Title>
+            <Text style={{ fontSize: '16px', color: '#fff' }}>
+              Support to solve problems during the use of Beta Movie Service
+            </Text>
           </Col>
-        ))}
-      </Row>
-    </div>
-   
+        </Row>
+
+        <Row justify="center" style={{ marginTop: '20px' }}>
+          <Col span={12}>
+            <Row justify="center" align="middle">
+              <Col span={12} style={{ textAlign: 'center' }}>
+                <MailOutlined style={{ fontSize: '24px', color: '#fff' }} />
+                <Text style={{ fontSize: '16px', color: '#fff', marginLeft: '8px' }}>
+                  Email: truongcon.work.77@gmail.com
+                </Text>
+              </Col>
+              <Col span={12} style={{ textAlign: 'center' }}>
+                <PhoneOutlined style={{ fontSize: '24px', color: '#fff' }} />
+                <Text style={{ fontSize: '16px', color: '#fff', marginLeft: '8px' }}>
+                  Hotline: 097131123X
+                </Text>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+      </div>
+      <div style={{ background: "#f5f5f5", padding: "40px" }}>
+        <h2 style={{ textAlign: 'center', marginBottom: "20px" }}>Frequently Asked Questions</h2>
+        <Row gutter={[16, 16]} justify="center">
+          {data.map((item, index) => (
+            <Col xs={24} sm={12} md={6} key={index}>
+              <Card title={item.title} bordered={false}>
+                <ul>
+                  {item.content.map((question, i) => (
+                    <li key={i}>{question}</li>
+                  ))}
+                </ul>
+                <a href="/#">{item.link}</a>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      </div>
+
     </div>
   );
 };
