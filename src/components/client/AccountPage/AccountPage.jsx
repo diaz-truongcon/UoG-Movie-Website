@@ -42,8 +42,8 @@ const AccountPage = () => {
                 navigate('/accountpage/offers');
                 break;
             case '5':
-                // Handle logout logic here
-                setIsLoggedIn(false); // Example logout action
+                setIsLoggedIn(false);
+                navigate("/");
                 break;
             default:
                 break;
@@ -52,11 +52,11 @@ const AccountPage = () => {
 
     // Define menu items array for the new `items` prop
     const menuItems = [
-        { key: '1', icon: <UserOutlined />, label: <p style={{ color: 'black' }}>Tài khoản</p> },
-        { key: '2', icon: <PicRightOutlined />, label: <p style={{ color: 'black' }}>Quản lý kho phim</p> },
-        { key: '3', icon: <AppstoreOutlined />, label: <p style={{ color: 'black' }}>Quản lý Gói đăng ký</p> },
-        { key: '4', icon: <GiftOutlined />, label: <p style={{ color: 'black' }}>Ưu đãi của bạn</p> },
-        { key: '5', icon: <LogoutOutlined />, label: <p style={{ color: 'black' }}>Đăng xuất</p> },
+        { key: '1', icon: <UserOutlined />, label: <p style={{ color: 'black' }}>Account</p> },
+        { key: '2', icon: <PicRightOutlined />, label: <p style={{ color: 'black' }}>Movie Library Management</p> },
+        { key: '3', icon: <AppstoreOutlined />, label: <p style={{ color: 'black' }}>Subscription Plan Management</p> },
+        { key: '4', icon: <GiftOutlined />, label: <p style={{ color: 'black' }}>Your Offers</p> },
+        { key: '5', icon: <LogoutOutlined />, label: <p style={{ color: 'black' }}>Logout</p> },
     ];
 
     return (
@@ -70,14 +70,10 @@ const AccountPage = () => {
                     />
                     <p style={{ textAlign: 'center', marginBottom: "10px" }}>
                         <Upload {...uploadProps} showUploadList={false} style={{ textAlign: 'center' }}>
-                            <Button>Chọn ảnh đại diện</Button>
+                            <Button>Choose Avatar</Button>
                         </Upload>
                     </p>
-                    <p style={{ textAlign: 'center' }}>0378486992</p>
-                    <p style={{ textAlign: 'center' }}>Bạn chưa có gói Galaxy Play</p>
-                    <p style={{ textAlign: 'center', padding: "20px" }}>
-                        <Button type="primary">Đăng ký gói</Button>
-                    </p>
+                    <p style={{ textAlign: 'center', marginBottom: "30px" }}>{isLoggedIn?.id}</p>
                     <Menu
                         mode="inline"
                         defaultSelectedKeys={['1']}

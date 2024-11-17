@@ -1,9 +1,9 @@
 import { Card, Avatar, Input, Button,Badge } from 'antd';
-import { SendOutlined, SearchOutlined, CloseOutlined, WechatOutlined, CheckOutlined, SmileOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import { SendOutlined, SearchOutlined, CloseOutlined, WechatOutlined, CheckOutlined, SmileOutlined, CheckCircleOutlined, FullscreenOutlined,FullscreenExitOutlined, DeleteFilled } from '@ant-design/icons';
 import React, { useState, useContext, useEffect } from 'react';
 import { ContextMessages } from "../../../context/MessagesProvider";
 import { formatCommentTime } from "../../../utils/ContantsFunctions";
-import { updateDocument, addDocument } from '../../../Service/FirebaseService';
+import { updateDocument, addDocument , deleteDocument } from '../../../Service/FirebaseService';
 import { CustomerLoginContext } from '../../../context/CustomerLoginContext';
 import { ContextCustomers } from "../../../context/CustomersContext";
 function ChatBoxAdmin(props) {
@@ -15,6 +15,7 @@ function ChatBoxAdmin(props) {
     const [idChatUser, setIdChatUser] = useState("");
     const { isLoggedIn } = useContext(CustomerLoginContext);
     const customers = useContext(ContextCustomers);
+    const [screen,setScreen] = useState(false);
     useEffect(() => {
         const latestMessages = new Map();
 
@@ -54,14 +55,14 @@ function ChatBoxAdmin(props) {
     const handleSendMessage = async () => {
         const trimmedMessage = messageInput.trim();
         if (trimmedMessage) {
+            setMessageInput('');
             await addDocument('Messages', {
                 text: trimmedMessage,
                 sender: idChatUser,
                 type: isLoggedIn.role,
                 timestamp: new Date(),
                 status: false
-            });
-            setMessageInput('');
+            });       
         }
     };
 
@@ -76,8 +77,16 @@ function ChatBoxAdmin(props) {
     const unreadMessages = () => {
         return chatUser.filter((msg) => msg.status === false && msg.type === "user").length;
     }
+    
+ const deleteChatUser = (id) => {
+   const messageByUser = messages.filter((msg) => msg.sender === id);
+   messageByUser.forEach(async (msg) => {
+       await deleteDocument('Messages', msg.id);
+   });
+ }
+ 
     return chatVisible ? (
-        <div className='chat-box-admin'>
+        <div className='chat-box-admin' style={{ minWidth: screen ? "95vw" : "50vw", minHeight: screen ? "95vh" : ""}}>
             <Card title={
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: "space-between" }}>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -85,16 +94,20 @@ function ChatBoxAdmin(props) {
                         <span style={{ marginLeft: '10px' }}>Admin</span>
                     </div>
                     <div>
-                        <SearchOutlined style={{ marginRight: "10px" }} />
+                        <span onClick={() => setScreen(!screen)} style={{ marginRight: "10px" }}>
+                            {
+                                screen ? <FullscreenExitOutlined /> :<FullscreenOutlined  />
+                            }
+                        </span>
                         <CloseOutlined onClick={() => {setChatVisible(false); setIdChatUser("")}} />
                     </div>
                 </div>
-            } style={{ backgroundImage: "linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%)" }}>
+            } style={{ backgroundImage: "linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%)", height: screen ? "95vh" : "" }}>
                 <div style={{ display: 'flex' }}>
                     {/* Sidebar - takes up 1/3 of the width */}
                     <div style={{ flex: 1, paddingRight: '10px', borderRight: '1px solid #f0f0f0' }}>
                         <Input placeholder="Search" prefix={<SearchOutlined />} />
-                        <div style={{ marginTop: '10px', overflowY: "auto", height: "200px" }}>
+                        <div style={{ marginTop: '10px', overflowY: "auto", height: screen ? "calc(95vh - 200px)" : "200px" }}>
                             {chatUser.map((user, index) => (
                                 <div className='chat-user' key={index} onClick={() => setIdChatUser(user.sender)}>
                                     <Avatar src={getImgUser(user.sender)} />
@@ -102,6 +115,7 @@ function ChatBoxAdmin(props) {
                                         <h5 className={user.status || user.type == "admin" ? "" : "black"}>{getUsenameUser(user.sender)}</h5>
                                         <p className={user.status || user.type == "admin" ? "" : "black"}>{user.text}</p> {/* Display the latest message */}
                                     </div>
+                                    <DeleteFilled className='delete-chat' onClick={() => deleteChatUser(user.sender)} />
                                 </div>
                             ))}
                         </div>
@@ -109,12 +123,12 @@ function ChatBoxAdmin(props) {
 
                     {/* Chat area - takes up 2/3 of the width */}
                     <div style={{ flex: 2, paddingLeft: '10px' }}>
-                        <div style={{ height: '200px', overflowY: 'scroll', marginBottom: '10px' }}>
+                        <div style={{ height: screen ? "calc(95vh - 200px)" : "200px", overflowY: 'scroll', marginBottom: '10px' }}>
                             {
                                 chatRoom.map((mes, index) => (
                                     <>
                                         {mes.type === "user" ? (
-                                            <div style={{ width: "60%", display: "flex", gap: "10px", marginBottom: "10px" }} key={index}>
+                                            <div style={{ width: screen ? "40%" : "60%", display: "flex", gap: "10px", marginBottom: "10px" }} key={index}>
                                                 <div style={{ alignSelf: "end" }}>
                                                     <Avatar src={getImgUser(mes.sender)} />
                                                 </div>
@@ -125,7 +139,7 @@ function ChatBoxAdmin(props) {
                                             </div>
                                         ) : (
                                             // Optionally handle messages from other roles here
-                                            <div style={{ width: "60%", marginBottom: "10px", marginLeft: "auto", marginRight: "10px" }} key={index}>
+                                            <div style={{ width: screen ? "40%" : "60%", marginBottom: "10px", marginLeft: "auto", marginRight: "10px" }} key={index}>
                                                 <div style={{ padding: '10px', borderRadius: "10px", flex: "1", backgroundImage: "radial-gradient(circle 248px at center, #16d9e3 0%, #30c7ec 47%, #46aef7 100%)" }}>
                                                     <div style={{ color: 'white' }}>{mes.text}</div> {/* Display the message text for other roles */}
                                                     <div style={{ color: '#8c8c8c', textAlign: "end" }}>{formatCommentTime(mes.timestamp)}{!mes.status ? (<CheckOutlined />) : (<CheckCircleOutlined />)} </div>

@@ -96,73 +96,7 @@ li {
   width: 100%;
 }
 
-.slide {
-  position: relative;
 
-  img {
-    opacity: 0.3;
-  }
-
-  .ant-image-img {
-    height: 85vh;
-
-  }
-
-  .content {
-    position: absolute;
-    color: white;
-    top: 50%;
-    left: 10%;
-    transform: translateY(-50%);
-    width: 50%;
-
-    h3 {
-      text-transform: uppercase;
-      font-family: verdana;
-      font-size: 3em;
-      font-weight: 700;
-      margin-bottom: 20px;
-      background: linear-gradient(45deg, #ff6b6b, #f06595, #cc5de8, #845ef7, #5c7cfa, #339af0, #22b8cf, #20c997, #51cf66, #94d82d, #fcc419, #ff922b, #ff6b6b);
-      background-size: 200% 200%;
-      animation: gradientAnimation 2s ease infinite;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      position: relative;
-      display: inline-block;
-    }
-
-    h3::before {
-      content: attr(data-shadow-text);
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: -1;
-      text-shadow: 1px 1px 1px #919191,
-        1px 2px 1px #919191,
-        1px 3px 1px #919191,
-        1px 4px 1px #919191,
-        1px 5px 1px #919191,
-        1px 6px 1px #919191,
-        1px 7px 1px #919191,
-        1px 8px 1px #919191,
-        1px 9px 1px #919191,
-        1px 10px 1px #919191,
-        1px 18px 6px rgba(16, 16, 16, 0.4),
-        1px 22px 10px rgba(16, 16, 16, 0.2),
-        1px 25px 35px rgba(16, 16, 16, 0.2),
-        1px 30px 60px rgba(16, 16, 16, 0.4);
-    }
-
-    .btn-like {
-      margin-left: 10px !important;
-      background-color: #434343;
-    }
-
-    p {
-      margin-top: 10px;
-    }
-  }
-}
 
 @keyframes gradientAnimation {
   0% {
@@ -180,82 +114,6 @@ li {
   }
 }
 
-/* mobile */
-@media screen and (max-width: 768px) {
-  .ant-card-body {
-    padding: 0 !important;
-  }
-
-  .footer {
-    padding: 1em;
-    padding-bottom: 3em;
-  }
-
-  .playmovie {
-    height: 40vh;
-  }
-
-  .ant-card {
-    padding: 16px;
-    /* điều chỉnh kích thước padding tùy ý */
-  }
-
-
-  /* .movie {
-    position: static;
-  } */
-  .slide {
-    font-size: 6px;
-
-    .content {
-      width: 100%;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-
-      .btn {
-        text-align: center;
-      }
-
-      p {
-        display: none;
-      }
-
-      h3 {
-        text-align: center;
-      }
-    }
-
-  }
-}
-
-/* tablet */
-@media screen and (min-width:768px) and (max-width: 1024px) {
-  .button-movie span {
-    font-size: 1.3em !important;
-  }
-
-  .footer {
-    padding: 3em;
-  }
-
-  .moviedetail {
-    position: absolute;
-    top: 10%;
-    left: 10%;
-    width: 50vw;
-  }
-
-  .slide {
-    .content {
-      width: 70%;
-    }
-  }
-
-  .playmovie {
-    height: 70vh;
-  }
-}
 
 /* laptop */
 @media screen and (min-width: 1025px) {
@@ -278,7 +136,6 @@ li {
   .carousel {
     .ant-image-img {
       height: 85vh;
-
     }
   }
 
@@ -289,6 +146,49 @@ li {
     width: 50vw;
   }
 
+}
+/* tablet */
+@media screen and (min-width:768px) and (max-width: 1024px) {
+  .button-movie span {
+    font-size: 1.3em !important;
+  }
+
+  .footer {
+    padding: 3em;
+  }
+
+  .moviedetail {
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    width: 50vw;
+  }
+
+  .playmovie {
+    height: 70vh;
+  }
+}
+
+/* mobile */
+@media screen and (max-width: 768px) {
+  .ant-card-body {
+    padding: 0 !important;
+  }
+
+  .footer {
+    padding: 1em;
+    padding-bottom: 3em;
+  }
+
+  .playmovie {
+    height: 40vh;
+  }
+
+  .ant-card {
+    padding: 16px;
+    /* điều chỉnh kích thước padding tùy ý */
+  }
+ 
 }
 
 .responsive-table {

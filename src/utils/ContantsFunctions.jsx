@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { ContextMovies } from '../context/MoviesContext';
-import { checkVipEligibility, checkIfMovieRented } from '../Service/FirebaseService';
+import { checkIfMovieRented } from '../Service/PlanService';
+import { checkVipEligibility } from "../Service/PlanService";
 import { message } from 'antd';
 // Using `useContext` inside a function that can be reused
 export const getTopLikedMovies = (count) => {
@@ -68,7 +69,7 @@ export const handleClick = async (movie, isLoggedIn, plans, navigate) => {
     }
     const plan = plans.find(p => p.id === movie.vip);
     if(plan.level > 2) {
-        navigate(`/rentmovie/${movie.id}`);
+        navigate(`/pay/${movie.id}`);
     } else {
         navigate(`/subscriptionplan`);
     }
@@ -91,7 +92,7 @@ export const formatCommentTime = (commentDate) => {
     } else if (diffInDays <= 10) {
         return `${diffInDays} days ago`; // Hiển thị số ngày trước nếu từ 1 đến 10 ngày
     } else {
-        return new Date(commentDate).toLocaleDateString(); // Hiển thị ngày bình luận nếu quá 10 ngày
+        return formatFirebaseTimestamp(commentDate); // Hiển thị ngày bình luận nếu quá 10 ngày
     }
 };
 // Function to format Firebase timestamp and calculate expiry date

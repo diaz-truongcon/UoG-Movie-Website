@@ -100,7 +100,7 @@ function Packages() {
             </Table>
             <Modal
                 title={packageEdit ? "Edit Package" : "Add Package"}
-                visible={visible}
+                open={visible}
                 onOk={handleOk}
                 onCancel={handleCancel}
             >

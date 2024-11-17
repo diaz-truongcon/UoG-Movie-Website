@@ -98,7 +98,7 @@ const Login = ({ handleCancel, isModalVisible }) => {
         <>
             <Modal
                 title={isForgot ? "Forgot Password" : (isSignUp ? "Sign Up" : "Login")}
-                visible={isModalVisible}
+                open={isModalVisible}
                 footer={null}
                 onCancel={handleCancel}
                 centered

@@ -129,7 +129,7 @@ function Categories() {
             </Table>
             <Modal
                 title={categoryEdit ? "Edit Category" : "Add Category"}
-                visible={visible}
+                open={visible}
                 onOk={handleOk}
                 onCancel={handleCancel}
             >

@@ -193,7 +193,7 @@ function Movies() {
             </Table>
             <Modal
                 title={movieEdit ? "Edit Movie" : "Add Movie"}
-                visible={visible}
+                open={visible}
                 onOk={handleOk}
                 onCancel={handleCancel}>
                 <Form form={form} layout="vertical">

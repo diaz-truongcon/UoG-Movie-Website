@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Card, Select, Row, Col } from 'antd';
-import { getSubscriptionsByMonthAndYear } from "../../../Service/FirebaseService";
+import { getSubscriptionsByMonthAndYear } from "../../../Service/PlanService";
 import { ContextPlans } from '../../../context/PlansContext';
 import { COLORS } from '../../../utils/Contants';
 

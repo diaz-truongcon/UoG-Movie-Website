@@ -31,7 +31,7 @@ function Welcome(props) {
                         <Row gutter={[16, 16]}>
                             <Col span={8}>
                                 <Image
-                                    class="animate__animated animate__bounce"
+                                    className="animate__animated animate__bounce"
                                     src="https://firebasestorage.googleapis.com/v0/b/uog-movie-website.appspot.com/o/Pictures%2F1-1.png?alt=media&token=4b622447-496d-4302-b99a-70478ec03d1e" // URL ảnh phim
                                     alt="Eve Movie"
                                     preview={false}
@@ -156,7 +156,7 @@ function Welcome(props) {
                                     src="https://firebasestorage.googleapis.com/v0/b/uog-movie-website.appspot.com/o/Pictures%2Foption2.png?alt=media&token=761dd796-4841-4e9f-a6af-a45358dc2a67" // URL ảnh của bạn cho phần bên phải
                                 />
                             }
-                            bodyStyle={{ backgroundColor: '#000', color: '#fff' }}
+                            style={{ backgroundColor: "#000" }}
                         >
                             <Title level={3} style={{ color: '#fff' }}>
                                 SELECT MOVIE

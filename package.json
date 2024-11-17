@@ -13,6 +13,8 @@
     "@ant-design/icons": "^5.2.6",
     "@paypal/react-paypal-js": "^8.7.0",
     "antd": "^5.20.5",
+    "cloudinary": "^2.5.1",
+    "crypto-js": "^4.2.0",
     "emailjs-com": "^3.2.0",
     "firebase": "^10.14.0",
     "react": "^18.2.0",

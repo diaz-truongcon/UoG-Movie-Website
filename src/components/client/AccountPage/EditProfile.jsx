@@ -30,13 +30,13 @@ function EditProfile() {
                     backgroundColor: '#fff',
                 }}
             >
-                <h2 style={{ textAlign: "center", marginBottom: "10px" }}>Thông tin tài khoản</h2>
+                <h2 style={{ textAlign: "center", marginBottom: "10px" }}>Account Information</h2>
                 <Form
                     layout="vertical"
                     form={form}
                     onFinish={handleOk}
                 >
-                    <Form.Item label="Họ và tên" name="name">
+                    <Form.Item label="Full Name" name="name">
                         <Input />
                     </Form.Item>
 
@@ -58,20 +58,20 @@ function EditProfile() {
                             </Form.Item>
                         </Col>
                     </Row>
-                    <Form.Item label="Giới tính" name="gender">
+                    <Form.Item label="Gender" name="gender">
                         <Radio.Group style={{ flexDirection: "row" }}>
-                            <Radio value="male">Nam</Radio>
-                            <Radio value="female">Nữ</Radio>
-                            <Radio value="other">Khác</Radio>
+                            <Radio value="male">Male</Radio>
+                            <Radio value="female">Female</Radio>
+                            <Radio value="other">Other</Radio>
                         </Radio.Group>
                     </Form.Item>
                     <Form.Item
-                        label="Số điện thoại"
+                        label="Phone"
                         name="phone">
                         <Input />
                     </Form.Item>
                     {isLoggedIn?.password ? (<Form.Item
-                        label="Mật khẩu"
+                        label="Password"
                         name="password"
                         rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
                     >
@@ -79,12 +79,12 @@ function EditProfile() {
                             placeholder="Nhập mật khẩu"
                             visibilityToggle={true} // This enables the show/hide feature
                         />
-                    </Form.Item>) : <span className='text-google'>Sign in with Google</span> }
-                     <p  style={{marginTop:"15px"}}>
-                     <Button type="primary" htmlType="submit">
-                        Chỉnh sửa
-                    </Button>
-                     </p>               
+                    </Form.Item>) : <span className='text-google'>Sign in with Google</span>}
+                    <p style={{ marginTop: "15px" }}>
+                        <Button type="primary" htmlType="submit">
+                            Update
+                        </Button>
+                    </p>
                 </Form>
                 {/* <h3 style={{ marginTop: "20px" }}>Kết nối mạng xã hội</h3>
             <Button icon={<AppleOutlined />} style={{ marginRight: 8 }}>Apple</Button>

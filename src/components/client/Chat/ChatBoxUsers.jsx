@@ -28,7 +28,10 @@ const ChatBoxUsers = () => {
     };
     useEffect(() => {
         openChatRoom();
-    }, [messages])
+    }, [messages,isLoggedIn]);
+    useEffect(() => {
+       setChat(false);
+    }, [isLoggedIn]);
     const openChatRoom = () => {
         const listChat = messages.filter((e) => e.sender === isLoggedIn.id).sort((a, b) => a.timestamp - b.timestamp);
         setChatUser(listChat);

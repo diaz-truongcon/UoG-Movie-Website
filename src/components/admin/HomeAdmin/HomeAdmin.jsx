@@ -24,7 +24,6 @@ import logo from "../../../assets/logo.png"
 import ChatBoxAdmin from '../../client/Chat/ChatBoxAdmin';
 import AdminRouters from '../../../routes/AdminRouters';
 const { Header, Content, Footer, Sider } = Layout;
-const { SubMenu } = Menu;
 
 const HomeAdmin = ({ currentTheme, setCurrentTheme }) => {
   const [collapsed, setCollapsed] = useState(false);
@@ -37,7 +36,6 @@ const HomeAdmin = ({ currentTheme, setCurrentTheme }) => {
   };
 
   useEffect(() => {
-    // Load the selected key from local storage on component mount
     const storedKey = localStorage.getItem('selectedKey');
     if (storedKey) {
       setSelectedKey(storedKey);
@@ -45,36 +43,33 @@ const HomeAdmin = ({ currentTheme, setCurrentTheme }) => {
   }, []);
 
   const handleMenuClick = (key) => {
-    // Update the selected key in local storage and state
     localStorage.setItem('selectedKey', key);
     setSelectedKey(key);
   };
 
   const handleClick = () => {
-    setIsLoggedIn(false); // Set the login state to false
-    navigate("/");        // Navigate to the home page
+    setIsLoggedIn(false);
+    navigate("/");
   };
 
-  // Define your menu items as an array
   const menuItems = [
-    { key: '1', icon: <PieChartOutlined />, label: 'Dashboard', route: '/' },
-    { key: '2', icon: <AppstoreOutlined />, label: 'Categories', route: '/categories' },
-    { key: '3', icon: <PlayCircleOutlined />, label: 'Movies', route: '/movies' },
-    { key: '4', icon: <MenuUnfoldOutlined />, label: 'Episodes', route: '/episodes' },
-    { key: '5', icon: <UsergroupAddOutlined />, label: 'Customers', route: '/customers' },
-    { key: '6', icon: <CommentOutlined />, label: 'Comments', route: '/comments' },
+    { key: '1', icon: <PieChartOutlined />, label: <Link to="/" onClick={() => handleMenuClick('1')}>Dashboard</Link> },
+    { key: '2', icon: <AppstoreOutlined />, label: <Link to="/categories" onClick={() => handleMenuClick('2')}>Categories</Link> },
+    { key: '3', icon: <PlayCircleOutlined />, label: <Link to="/movies" onClick={() => handleMenuClick('3')}>Movies</Link> },
+    { key: '4', icon: <MenuUnfoldOutlined />, label: <Link to="/episodes" onClick={() => handleMenuClick('4')}>Episodes</Link> },
+    { key: '5', icon: <UsergroupAddOutlined />, label: <Link to="/customers" onClick={() => handleMenuClick('5')}>Customers</Link> },
+    { key: '6', icon: <CommentOutlined />, label: <Link to="/comments" onClick={() => handleMenuClick('6')}>Comments</Link> },
     {
       key: '7',
-      icon: <CrownOutlined />, // Icon for VIP
-      label: 'Vip', // Main label for Vip
+      icon: <CrownOutlined />,
+      label: 'Vip',
       children: [
-        { key: '7-1', icon: <ContainerOutlined />, label: 'Plans', route: '/vip/plans' },
-        { key: '7-2', icon: <GiftOutlined />, label: 'Package', route: '/vip/packages' },
-        { key: '7-3', icon: <StarOutlined />, label: 'Features', route: '/vip/features' }
+        { key: '7-1', icon: <ContainerOutlined />, label: <Link to="/vip/plans" onClick={() => handleMenuClick('7-1')}>Plans</Link> },
+        { key: '7-2', icon: <GiftOutlined />, label: <Link to="/vip/packages" onClick={() => handleMenuClick('7-2')}>Package</Link> },
+        { key: '7-3', icon: <StarOutlined />, label: <Link to="/vip/features" onClick={() => handleMenuClick('7-3')}>Features</Link> }
       ]
     },
-    { key: '8', icon: <UserOutlined />, label: 'Profile', route: '/profile' },
-    // Add other menu items as needed
+    { key: '8', icon: <UserOutlined />, label: <Link to="/profile" onClick={() => handleMenuClick('8')}>Profile</Link> }
   ];
 
   const menu = (
@@ -90,9 +85,9 @@ const HomeAdmin = ({ currentTheme, setCurrentTheme }) => {
           </div>
         )}
       </Menu.Item>
-      <Menu.Item key="1"><UnorderedListOutlined style={{ paddingRight: "1rem" }} /> Quản lý kho phim</Menu.Item>
-      <Menu.Item key="2"><UserOutlined style={{ paddingRight: "1rem" }} />Tài khoản</Menu.Item>
-      <Menu.Item onClick={handleClick} key="3"><LoginOutlined style={{ paddingRight: "1rem" }} /> Đăng xuất</Menu.Item>
+      <Menu.Item key="2"><UnorderedListOutlined style={{ paddingRight: "1rem" }} /> Quản lý kho phim</Menu.Item>
+      <Menu.Item key="3"><UserOutlined style={{ paddingRight: "1rem" }} />Tài khoản</Menu.Item>
+      <Menu.Item onClick={handleClick} key="4"><LoginOutlined style={{ paddingRight: "1rem" }} /> Đăng xuất</Menu.Item>
     </Menu>
   );
 
@@ -101,31 +96,11 @@ const HomeAdmin = ({ currentTheme, setCurrentTheme }) => {
       <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
         <div className="logo" style={{ height: "50px" }} >
           <img src={logo} alt="" style={{
-            width: collapsed ? "auto" : "40%", // Kiểm tra colgap, nếu true thì 40%, nếu không thì auto hoặc giá trị khác
-            margin: collapsed ? "initial" : "auto" // margin auto khi colgap là true, nếu không thì giữ giá trị mặc định
+            width: collapsed ? "auto" : "40%",
+            margin: collapsed ? "initial" : "auto"
           }} />
         </div>
-        <Menu theme="dark" selectedKeys={[selectedKey]} mode="inline">
-          {menuItems.map(item => (
-            item.children ? (
-              <SubMenu key={item.key} icon={item.icon} title={item.label}>
-                {item.children.map(child => (
-                  <Menu.Item key={child.key} icon={child.icon}>
-                    <Link to={child.route} onClick={() => handleMenuClick(child.key)}>
-                      {child.label}
-                    </Link>
-                  </Menu.Item>
-                ))}
-              </SubMenu>
-            ) : (
-              <Menu.Item key={item.key} icon={item.icon}>
-                <Link to={item.route} onClick={() => handleMenuClick(item.key)}>
-                  {item.label}
-                </Link>
-              </Menu.Item>
-            )
-          ))}
-        </Menu>
+        <Menu theme="dark" selectedKeys={[selectedKey]} mode="inline" items={menuItems} />
       </Sider>
       <Layout className="site-layout">
         <Header className="site-layout-background" style={{ padding: "0 30px", display: "flex", justifyContent: "space-between", alignItems: "center" }} >
@@ -135,15 +110,12 @@ const HomeAdmin = ({ currentTheme, setCurrentTheme }) => {
           </Radio.Group>
           <Dropdown overlay={menu}>
             <Button style={{ background: "none", border: "none", color: "white" }}>
-              <Image style={{ width: "30px", height: "30px", borderRadius: "50%" }} src="https://assets.glxplay.io/static/avatars/avatar%20gp%20grb-07.jpg" alt="" /> <DownOutlined style={{ fontSize: "1rem" }} />
+              <Image style={{ width: "30px", height: "30px", borderRadius: "50%" }} src="https://firebasestorage.googleapis.com/v0/b/uog-movie-website.appspot.com/o/Pictures%2FCat%20Avatar.png?alt=media&token=5f836abe-1281-4d87-a771-b11009fcd271" alt="" /> <DownOutlined style={{ fontSize: "1rem" }} />
             </Button>
           </Dropdown>
         </Header>
         <Content style={{ margin: '0 16px' }}>
-          <Breadcrumb style={{ margin: '16px 0' }}>
-            {/* <Breadcrumb.Item>User</Breadcrumb.Item>
-            <Breadcrumb.Item>Bill</Breadcrumb.Item> */}
-          </Breadcrumb>
+          <Breadcrumb style={{ margin: '16px 0' }}></Breadcrumb>
           <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
             <AdminRouters />
           </div>

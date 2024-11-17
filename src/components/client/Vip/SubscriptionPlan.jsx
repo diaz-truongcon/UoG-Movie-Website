@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { CheckOutlined } from "@ant-design/icons";
 import { ContextPlans } from '../../../context/PlansContext';
 import { ContextFeatures } from '../../../context/ContextFeatures';
-import { getPlansByUser } from "../../../Service/FirebaseService";
+import { getPlansByUser } from "../../../Service/PlanService";
 import { CustomerLoginContext } from '../../../context/CustomerLoginContext';
 
 const SubscriptionPlan = () => {

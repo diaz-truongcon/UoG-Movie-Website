@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Row, Col, Input, Button, Tooltip, message } from 'antd';
 import { PlayCircleOutlined, HeartOutlined, MinusOutlined, CheckCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { getFavorites, deleteDocument, fetchDocuments, addDocument, updateDocument } from '../../../Service/FirebaseService'; // Firebase service functions
+import { deleteDocument, fetchDocuments, addDocument, updateDocument } from '../../../Service/FirebaseService'; // Firebase service functions
 import { CustomerLoginContext } from "../../../context/CustomerLoginContext";
+import { getFavorites } from "../../../Service/PlanService";
 import { ContextMovies } from '../../../context/MoviesContext';
 import { Link } from 'react-router-dom';
 

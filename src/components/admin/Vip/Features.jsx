@@ -104,7 +104,7 @@ function Features() {
             {/* Modal for Adding/Editing Features */}
             <Modal
                 title={featureEdit ? "Edit Feature" : "Add Feature"}
-                visible={visible}
+                open={visible}
                 onOk={handleOk}
                 onCancel={handleCancel}
             >

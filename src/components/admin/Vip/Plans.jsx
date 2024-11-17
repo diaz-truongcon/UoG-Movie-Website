@@ -102,7 +102,7 @@ function Plans() {
 
             <Modal
                 title={planEdit ? "Edit Plan" : "Add Plan"}
-                visible={visible}
+                open={visible}
                 onOk={handleOk}
                 onCancel={handleCancel}
             >

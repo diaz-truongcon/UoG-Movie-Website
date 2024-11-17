@@ -2,9 +2,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 90vh;
+    overflow: hidden;
     background: linear-gradient(150deg, rgb(214, 240, 68), rgb(47, 147, 218));
-
     .box {
         position: relative;
         width: 200px;
@@ -54,5 +53,22 @@
     img:hover {
         transform: translateY(-2px);
 
+    }
+}
+
+/* laptop */
+@media screen and (min-width: 1025px) {
+    .rent {
+        min-height: 90vh;
+    }
+}
+/* mobile */
+@media screen and (max-width: 768px) {
+    .rent {
+        min-height: 50vh;
+        .box {
+            height: 150px;
+            width: 100px;
+        }
     }
 }

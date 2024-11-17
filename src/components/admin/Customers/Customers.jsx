@@ -16,7 +16,6 @@ function Customers() {
     const [imgUpload, setImgUpload] = useState(null);
     const [update, setUpdate] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
-    const [visiblePasswordId, setVisiblePasswordId] = useState(null);
     const { isLoggedIn } = useContext(CustomerLoginContext);
     const customers = useContext(ContextCustomers);
 
@@ -157,7 +156,7 @@ function Customers() {
                     </Table>
                     <Modal
                         title={customerEdit ? "Edit Customer" : "Add Customer"}
-                        visible={visible}
+                        open={visible}
                         onOk={handleOk}
                         onCancel={handleCancel}
                     >

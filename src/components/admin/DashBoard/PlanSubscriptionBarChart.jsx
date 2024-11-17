@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
 import { Card, Select, Row, Col } from 'antd';
-import { getSubscriptionsByMonthAndYear } from "../../../Service/FirebaseService";
+import { getSubscriptionsByMonthAndYear } from "../../../Service/PlanService";
 import { ContextPlans } from '../../../context/PlansContext';
 import { COLORS } from '../../../utils/Contants';
 const { Option } = Select;

@@ -17,7 +17,7 @@ import DeviceManagement from '../components/client/AccountPage/DeviceManagement'
 import Offers from '../components/client/AccountPage/Offers';
 import Rentflix from '../components/client/AccountPage/Rentflix';
 import EditProfile from '../components/client/AccountPage/EditProfile';
-
+import Pay from '../components/client/Vip/Pay';
 const routes = [
     { path: "/", element: <Welcome /> },
     { path: "/main", element: <Main /> },
@@ -26,6 +26,7 @@ const routes = [
     { path: "/playmovie/:id", element: <PlayMovie /> },
     { path: "/subscriptionplan", element: <SubscriptionPlan /> },
     { path: "/paymentpage/:id", element: <PaymentPage /> },
+    { path: "/pay/:id", element: <Pay /> },
     { path: "/search", element: <Search /> },
     { 
         path: "/accountpage", 

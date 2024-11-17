@@ -33,31 +33,31 @@ const Navbar = () => {
       ) : null,
     },
     {
-      key: "favorites",
+      key: "2",
       label: (
         <>
           <UnorderedListOutlined style={{ paddingRight: "1rem" }} />
-          Quản lý kho phim
+          Movie Library Management
         </>
       ),
       onClick: () => navigate('/favorites'),
     },
     {
-      key: "2",
+      key: "3",
       label: (
         <>
           <UserOutlined style={{ paddingRight: "1rem" }} />
-          Tài khoản
+          Account
         </>
       ),
       onClick: () => navigate('/accountpage'),
     },
     {
-      key: "3",
+      key: "4",
       label: (
         <>
           <LoginOutlined style={{ paddingRight: "1rem" }} />
-          Đăng xuất
+          Logout
         </>
       ),
       onClick: () => {
@@ -66,8 +66,6 @@ const Navbar = () => {
       },
     },
   ];
-  
-  const menu = <Menu items={menuItems} />;
 
   return (
     <>
@@ -96,9 +94,10 @@ const Navbar = () => {
           <Link className={isLoggedIn ? "" : "hidden"} to={"/search"} style={{ color: "white", fontSize: "1,5rem", marginLeft: "10px" }}>
             <SearchOutlined />
           </Link>
-          <Dropdown overlay={menu} className={isLoggedIn ? "" : "hidden"} >
+          <Dropdown overlay={<Menu items={menuItems} />} className={isLoggedIn ? "" : "hidden"} >
             <Button style={{ background: "none", border: "none", color: "white" }}>
-              <Image style={{ width: "30px", height: "30px", borderRadius: "50%" }} src="https://assets.glxplay.io/static/avatars/avatar%20gp%20grb-07.jpg" alt="" /> <DownOutlined style={{ fontSize: "1rem" }} />
+              <Image style={{ width: "30px", height: "30px", borderRadius: "50%" }} src="https://firebasestorage.googleapis.com/v0/b/uog-movie-website.appspot.com/o/Pictures%2FCat%20Avatar.png?alt=media&token=5f836abe-1281-4d87-a771-b11009fcd271" alt="" />
+              <DownOutlined style={{ fontSize: "1rem" }} />
             </Button>
           </Dropdown>
           <Button className={isLoggedIn ? "hidden" : ""} style={{ background: "none", color: "white" }} onClick={showModal}>ĐĂNG NHẬP</Button>

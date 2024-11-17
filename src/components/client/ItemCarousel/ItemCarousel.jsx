@@ -75,21 +75,20 @@ function ItemCarousel({ data, title }) {
                             setIsPaused={setIsPaused}
                         />
                     ))}
+                    <Button
+                        type="primary"
+                        icon={<LeftOutlined />}
+                        onClick={handlePrevClick}
+                        style={{ position: 'absolute', top: '50%',height: '100%', left: 0, transform: 'translateY(-50%)', background: "rgba(20, 20, 20, 0.5)", zIndex: "2" }}
+                    />
+                    <Button
+                        type="primary"
+                        icon={<RightOutlined />}
+                        onClick={handleNextClick}
+                        style={{ position: 'absolute', height: '100%', top: '50%', right: 0, transform: 'translateY(-50%)', background: "rgba(20, 20, 20, 0.5)", zIndex: "2" }}
+                    />
                 </Row>
-                <Button
-                    type="primary"
-                    shape="circle"
-                    icon={<LeftOutlined />}
-                    onClick={handlePrevClick}
-                    style={{ position: 'absolute', top: '60%', left: 0, transform: 'translateY(-50%)', background: "rgba(20, 20, 20, 0.5)", zIndex: "2" }}
-                />
-                <Button
-                    type="primary"
-                    shape="circle"
-                    icon={<RightOutlined />}
-                    onClick={handleNextClick}
-                    style={{ position: 'absolute', top: '60%', right: 0, transform: 'translateY(-50%)', background: "rgba(20, 20, 20, 0.5)", zIndex: "2" }}
-                />
+
             </div>
         </>
     );

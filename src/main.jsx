@@ -15,7 +15,8 @@ import { WatchHistoryProvider } from './context/WatchHistoryProvider';
 import { MessagesProvider } from './context/MessagesProvider';
 import { RentMoviesProvider } from './context/RentMoviesProvider';
 import { SubscriptionsProvider } from './context/SubscriptionsProvider';
-// Mảng chứa tất cả các provider
+
+// Array containing all providers
 const providers = [
     WatchHistoryProvider,
     CustomersProvider,
@@ -29,10 +30,10 @@ const providers = [
     CustomerLoginProvider,
     FavoritesProvider,
     MessagesProvider,
-    SubscriptionsProvider
+    SubscriptionsProvider,
 ];
 
-// Hàm để bọc các provider
+// Function to wrap providers
 const ProviderWrapper = ({ children }) => {
     return providers.reduceRight(
         (acc, Provider) => <Provider>{acc}</Provider>,

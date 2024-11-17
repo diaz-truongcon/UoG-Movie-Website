@@ -129,7 +129,7 @@ const filteredComments = comments.filter(comment => {
             </Table>
             <Modal
                 title={commentEdit ? "Edit Comment" : "Add Comment"}
-                visible={visible}
+                open={visible}
                 onOk={handleOk}
                 onCancel={handleCancel}
             >

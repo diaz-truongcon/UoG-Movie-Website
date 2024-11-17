@@ -1,0 +1,108 @@
+.slide {
+    position: relative;
+
+    img {
+        opacity: 0.3;
+    }
+
+    .content {
+        position: absolute;
+        color: white;
+        top: 50%;
+        left: 10%;
+        transform: translateY(-50%);
+        width: 50%;
+
+        .title {
+            h3 {
+                text-transform: uppercase;
+                font-family: verdana;
+                font-size: 3em;
+                font-weight: 700;
+                margin-bottom: 20px;
+                background: linear-gradient(45deg, #ff6b6b, #f06595, #cc5de8, #845ef7, #5c7cfa, #339af0, #22b8cf, #20c997, #51cf66, #94d82d, #fcc419, #ff922b, #ff6b6b);
+                background-size: 200% 200%;
+                animation: gradientAnimation 2s ease infinite;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                position: relative;
+                display: inline-block;
+            }
+
+            h3::before {
+                content: attr(data-shadow-text);
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: -1;
+                text-shadow: 1px 1px 1px #919191,
+                    1px 2px 1px #919191,
+                    1px 3px 1px #919191,
+                    1px 4px 1px #919191,
+                    1px 5px 1px #919191,
+                    1px 6px 1px #919191,
+                    1px 7px 1px #919191,
+                    1px 8px 1px #919191,
+                    1px 9px 1px #919191,
+                    1px 10px 1px #919191,
+                    1px 18px 6px rgba(16, 16, 16, 0.4),
+                    1px 22px 10px rgba(16, 16, 16, 0.2),
+                    1px 25px 35px rgba(16, 16, 16, 0.2),
+                    1px 30px 60px rgba(16, 16, 16, 0.4);
+            }
+        }
+
+        .btn-like {
+            margin-left: 10px !important;
+            background-color: #434343;
+        }
+
+        p {
+            margin-top: 10px;
+        }
+    }
+}
+
+/* laptop */
+@media screen and (min-width: 1025px) {
+    .ant-image-img {
+        height: 85vh;
+
+    }
+}
+
+ /* tablet */
+@media screen and (min-width:768px) and (max-width: 1024px) {
+   
+}
+
+/* mobile */
+@media screen and (max-width: 768px) {
+
+    .slide {
+        margin-top: 50px;
+        font-size: 6px;
+        .content {
+            width: 100%;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            .btn {
+                text-align: center;
+                .btn-like {
+                    margin-top: 10px;
+                }
+            }
+            p {
+                display: none;
+            }
+            .title {
+                text-align: center;
+                h3 {
+                    font-size: 2rem;
+                }
+            }
+        }
+
+    }
+}

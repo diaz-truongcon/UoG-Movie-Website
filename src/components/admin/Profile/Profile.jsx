@@ -83,7 +83,7 @@ const Profile = () => {
             {/* Modal để chỉnh sửa thông tin cá nhân */}
             <Modal
                 title="Chỉnh sửa hồ sơ"
-                visible={isModalVisible}
+                open={isModalVisible}
                 onOk={handleOk}
                 onCancel={handleCancel}
                 okText="Lưu"

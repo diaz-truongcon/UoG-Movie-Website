@@ -4,7 +4,7 @@ import { Radio, Button, Row, Col, Card, Divider, message } from 'antd';
 import { useParams ,useNavigate } from 'react-router-dom';
 import { CustomerLoginContext } from '../../../context/CustomerLoginContext'; // Context to get user info
 import { addDocument } from "../../../Service/FirebaseService"; // Function to add document to Firestore
-import { getPackagesByPlan } from "../../../Service/FirebaseService"; // Fetch packages by plan
+import { getPackagesByPlan } from "../../../Service/PlanService"; // Fetch packages by plan
 import { ContextPlans } from '../../../context/PlansContext';
 import { paymentMethods, initialOptions } from "../../../utils/Contants";
 const PaymentPage = () => {
